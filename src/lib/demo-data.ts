@@ -26,21 +26,51 @@ export const SAMPLE_TARGETS = {
 };
 
 export function getDemoUrlScan(url: string): UrlScanResult {
-  const isMalicious = url.includes("paypal") || url.includes("airdrop") || url.includes("malware") || url.includes("phish");
-  const isSuspicious = url.includes("duckdns") || url.includes("temp");
+  const lower = url.toLowerCase();
+  const isIpLogger = lower.includes("iplogger") || lower.includes("grabify") || lower.includes("2no.co") || lower.includes("yip.su") || lower.includes("iplis") || lower.includes("ezstat") || lower.includes("blasze");
+  const isMalicious = isIpLogger || lower.includes("paypal") || lower.includes("airdrop") || lower.includes("malware") || lower.includes("phish");
+  const isSuspicious = !isMalicious && (lower.includes("duckdns") || lower.includes("temp") || lower.includes("short"));
 
   const engines = [
-    { engineName: "Google Safe Browsing", category: isMalicious ? "malicious" as const : "harmless" as const, result: isMalicious ? "Social Engineering / Phishing" : "Clean" },
-    { engineName: "Kaspersky", category: isMalicious ? "malicious" as const : "harmless" as const, result: isMalicious ? "Phishing URL" : "Clean" },
-    { engineName: "Sophos", category: isMalicious ? "malicious" as const : "harmless" as const, result: isMalicious ? "Malicious Site" : "Clean" },
-    { engineName: "BitDefender", category: isMalicious ? "malicious" as const : (isSuspicious ? "suspicious" as const : "harmless" as const), result: isMalicious ? "Fraudulent URL" : "Clean" },
-    { engineName: "Fortinet", category: isMalicious ? "malicious" as const : "harmless" as const, result: isMalicious ? "Phishing" : "Clean" },
-    { engineName: "ESET", category: isMalicious ? "malicious" as const : "harmless" as const, result: isMalicious ? "Malware Distribution" : "Clean" },
-    { engineName: "Avast-ThreatLabs", category: isMalicious ? "malicious" as const : "harmless" as const, result: isMalicious ? "Phishing" : "Clean" },
-    { engineName: "CRDF", category: isMalicious ? "malicious" as const : "harmless" as const, result: isMalicious ? "Phishing" : "Clean" },
-    { engineName: "Forcepoint ThreatSeeker", category: isMalicious ? "malicious" as const : "harmless" as const, result: isMalicious ? "Phishing" : "Clean" },
-    { engineName: "Microsoft Defender SmartScreen", category: isMalicious ? "malicious" as const : "harmless" as const, result: isMalicious ? "Phishing" : "Clean" },
-    { engineName: "Symantec / Broadcom", category: isMalicious ? "malicious" as const : "harmless" as const, result: isMalicious ? "Suspicious URL" : "Clean" },
+    { 
+      engineName: "Google Safe Browsing", 
+      category: isMalicious ? ("malicious" as const) : ("harmless" as const), 
+      result: isIpLogger ? "Social Engineering / IP Logger Tracker" : (isMalicious ? "Social Engineering / Phishing" : "Clean") 
+    },
+    { 
+      engineName: "Kaspersky", 
+      category: isMalicious ? ("malicious" as const) : ("harmless" as const), 
+      result: isIpLogger ? "Malicious IP Logger / Tracker" : (isMalicious ? "Phishing URL" : "Clean") 
+    },
+    { 
+      engineName: "Sophos", 
+      category: isMalicious ? ("malicious" as const) : ("harmless" as const), 
+      result: isIpLogger ? "Spyware / IP Harvester" : (isMalicious ? "Malicious Site" : "Clean") 
+    },
+    { 
+      engineName: "BitDefender", 
+      category: isMalicious ? ("malicious" as const) : (isSuspicious ? ("suspicious" as const) : ("harmless" as const)), 
+      result: isIpLogger ? "Malicious Tracking Redirect" : (isMalicious ? "Fraudulent URL" : "Clean") 
+    },
+    { 
+      engineName: "Fortinet", 
+      category: isMalicious ? ("malicious" as const) : ("harmless" as const), 
+      result: isIpLogger ? "Malicious Web Link" : (isMalicious ? "Phishing" : "Clean") 
+    },
+    { 
+      engineName: "ESET", 
+      category: isMalicious ? ("malicious" as const) : ("harmless" as const), 
+      result: isIpLogger ? "Suspicious Redirection Service" : (isMalicious ? "Malware Distribution" : "Clean") 
+    },
+    { 
+      engineName: "Avast-ThreatLabs", 
+      category: isMalicious ? ("malicious" as const) : ("harmless" as const), 
+      result: isIpLogger ? "IP Harvester Redirect" : (isMalicious ? "Phishing" : "Clean") 
+    },
+    { engineName: "CRDF", category: isMalicious ? ("malicious" as const) : ("harmless" as const), result: isMalicious ? "Malicious URL" : "Clean" },
+    { engineName: "Forcepoint ThreatSeeker", category: isMalicious ? ("malicious" as const) : ("harmless" as const), result: isMalicious ? "Suspicious Activity" : "Clean" },
+    { engineName: "Microsoft Defender SmartScreen", category: isMalicious ? ("malicious" as const) : ("harmless" as const), result: isIpLogger ? "Phishing / Tracking Redirect" : (isMalicious ? "Phishing" : "Clean") },
+    { engineName: "Symantec / Broadcom", category: isMalicious ? ("malicious" as const) : ("harmless" as const), result: isMalicious ? "Suspicious URL" : "Clean" },
     { engineName: "Yandex Safebrowsing", category: "undetected" as const, result: "Clean" },
     { engineName: "AlienVault", category: "harmless" as const, result: "Clean" },
     { engineName: "AlphaSOC", category: "harmless" as const, result: "Clean" },

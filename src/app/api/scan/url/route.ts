@@ -37,15 +37,33 @@ export async function POST(req: NextRequest) {
       return NextResponse.json(demoResult);
     }
 
+    // Check for known IP Grabbers & Stealth Tracking Links
+    const lower = targetUrl.toLowerCase();
+    const isKnownIpLogger = 
+      lower.includes("iplogger.") || 
+      lower.includes("grabify.link") || 
+      lower.includes("2no.co") || 
+      lower.includes("yip.su") || 
+      lower.includes("iplis.ru") || 
+      lower.includes("ezstat.ru") || 
+      lower.includes("blasze.com") || 
+      lower.includes("bmwforum.co") || 
+      lower.includes("stopify.co") || 
+      lower.includes("spottyfly.com") || 
+      lower.includes("leancoding.co") ||
+      lower.includes("yoatu.be");
+
     // Call VirusTotal and Google Safe Browsing concurrently
-    const [vtResult, gsbResult] = await Promise.allSettled([
+    const [vtResult, gsbResult, redirectResult] = await Promise.allSettled([
       queryVirusTotalUrl(targetUrl, keys.virusTotalKey),
       queryGoogleSafeBrowsing(targetUrl, keys.googleSafeBrowsingKey),
+      traceRedirect(targetUrl),
     ]);
 
     let vtData = vtResult.status === "fulfilled" ? vtResult.value : null;
     const gsbData: GoogleSafeBrowsingResult | undefined =
       gsbResult.status === "fulfilled" ? gsbResult.value : undefined;
+    const redirectInfo = redirectResult.status === "fulfilled" ? redirectResult.value : null;
 
     // If VT failed or no key, build reasonable fallback with GSB if available
     let engines: EngineResult[] = [];
@@ -57,17 +75,29 @@ export async function POST(req: NextRequest) {
       timeout: 0,
     };
     let categories: Record<string, string> = {};
-    let finalUrl = targetUrl;
-    let httpResponseCode = 200;
+    let finalUrl = redirectInfo?.finalUrl || targetUrl;
+    let httpResponseCode = redirectInfo?.statusCode || 200;
     let permalink = "";
 
     if (vtData) {
       stats = vtData.stats;
       engines = vtData.engines;
       categories = vtData.categories || {};
-      finalUrl = vtData.finalUrl || targetUrl;
-      httpResponseCode = vtData.httpResponseCode || 200;
+      finalUrl = vtData.finalUrl || finalUrl;
+      httpResponseCode = vtData.httpResponseCode || httpResponseCode;
       permalink = vtData.permalink || "";
+    }
+
+    // Incorporate IP Logger / Tracker heuristic engine
+    if (isKnownIpLogger) {
+      stats.malicious += 4;
+      engines.unshift({
+        engineName: "ThreatVigil Privacy & Tracker Shield",
+        category: "malicious",
+        result: "Known IP Logger / Deceptive Tracking & Geolocation Harvester",
+        updateDate: new Date().toISOString().split("T")[0],
+      });
+      categories["Threat Intelligence"] = "IP Grabber & Tracking Redirect";
     }
 
     // Incorporate Google Safe Browsing result as an authoritative engine
@@ -91,15 +121,15 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    const assessment = calculateThreatScore(stats, gsbData?.isMalicious);
+    const assessment = calculateThreatScore(stats, isKnownIpLogger || gsbData?.isMalicious);
     const totalEngines = stats.malicious + stats.suspicious + stats.harmless + stats.undetected;
 
     const result: UrlScanResult = {
       scanId: `scan_url_${Date.now()}`,
       scanType: "url",
       target: targetUrl,
-      verdict: assessment.verdict,
-      threatScore: assessment.score,
+      verdict: isKnownIpLogger ? "malicious" : assessment.verdict,
+      threatScore: isKnownIpLogger ? Math.max(90, assessment.score) : assessment.score,
       positives: stats.malicious + stats.suspicious,
       totalEngines,
       stats,
@@ -257,5 +287,30 @@ async function queryGoogleSafeBrowsing(url: string, apiKey?: string): Promise<Go
   } catch (err) {
     console.error("GSB query error:", err);
     return undefined;
+  }
+}
+
+async function traceRedirect(url: string): Promise<{ finalUrl: string; statusCode: number } | null> {
+  try {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 4000);
+
+    const res = await fetch(url, {
+      method: "HEAD",
+      redirect: "manual",
+      signal: controller.signal,
+      headers: {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) ThreatVigil-Scanner/1.0",
+      },
+    });
+    clearTimeout(timeout);
+
+    const location = res.headers.get("location");
+    return {
+      finalUrl: location ? new URL(location, url).toString() : url,
+      statusCode: res.status,
+    };
+  } catch {
+    return null;
   }
 }
