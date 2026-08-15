@@ -1,4 +1,4 @@
-export type ScanType = 'url' | 'ip' | 'hash' | 'file' | 'qr';
+export type ScanType = 'url' | 'ip' | 'hash' | 'file' | 'qr' | 'about';
 
 export type Verdict = 'clean' | 'suspicious' | 'malicious' | 'unknown';
 

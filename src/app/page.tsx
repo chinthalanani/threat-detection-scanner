@@ -14,6 +14,7 @@ import {
   RotateCcw,
   Sparkles,
   Search,
+  Info,
 } from "lucide-react";
 import { Header } from "@/components/Header";
 import { UrlScanner } from "@/components/scanners/UrlScanner";
@@ -21,6 +22,7 @@ import { IpScanner } from "@/components/scanners/IpScanner";
 import { HashScanner } from "@/components/scanners/HashScanner";
 import { FileScanner } from "@/components/scanners/FileScanner";
 import { QrScanner } from "@/components/scanners/QrScanner";
+import { AboutSection } from "@/components/about/AboutSection";
 import { VerdictBanner } from "@/components/results/VerdictBanner";
 import { VendorMatrix } from "@/components/results/VendorMatrix";
 import { ReportDetails } from "@/components/results/ReportDetails";
@@ -167,6 +169,21 @@ export default function ThreatDashboard() {
               <QrCode className="w-4 h-4" />
               <span>QR Scanner</span>
             </button>
+
+            <button
+              onClick={() => {
+                setActiveTab("about");
+                setCurrentResult(null);
+              }}
+              className={`flex items-center gap-2 px-4 py-2.5 rounded-lg transition-all ${
+                activeTab === "about"
+                  ? "bg-soc-accent text-soc-darkest font-bold shadow-lg shadow-soc-accent/20"
+                  : "text-gray-400 hover:text-white"
+              }`}
+            >
+              <Info className="w-4 h-4" />
+              <span>About & Guide</span>
+            </button>
           </div>
         </div>
 
@@ -177,6 +194,7 @@ export default function ThreatDashboard() {
           {activeTab === "hash" && <HashScanner onScanComplete={handleScanComplete} />}
           {activeTab === "file" && <FileScanner onScanComplete={handleScanComplete} />}
           {activeTab === "qr" && <QrScanner onScanComplete={handleScanComplete} />}
+          {activeTab === "about" && <AboutSection />}
         </div>
 
         {/* Scan Results Section */}
