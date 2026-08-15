@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import Link from "next/link";
 import confetti from "canvas-confetti";
 import {
   Globe,
@@ -211,19 +212,26 @@ export default function ThreatDashboard() {
       {/* Footer */}
       <footer className="border-t border-soc-border/60 bg-soc-darker/60 py-6 text-center text-xs font-mono text-gray-500">
         <div className="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-3">
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 text-gray-400">
             <Shield className="w-4 h-4 text-soc-accent" />
-            <span>ThreatVigil Security Intelligence Platform</span>
+            <span>ThreatVigil Security Intelligence</span>
+            <span>•</span>
+            <Link href="/about" className="hover:text-soc-accent underline transition-colors">
+              How to Use / About
+            </Link>
           </div>
 
-          <div className="flex items-center gap-4 text-gray-400">
-            <span>Powered by VirusTotal v3, AbuseIPDB, Google Safe Browsing</span>
+          <div className="flex flex-wrap items-center gap-4 text-gray-400">
             <button
               onClick={() => setIsSettingsOpen(true)}
               className="hover:text-soc-accent underline transition-colors"
             >
               API Settings
             </button>
+            <span>•</span>
+            <div className="text-gray-300">
+              Developed by <span className="text-soc-accent font-bold">Chinthala Nani</span>
+            </div>
           </div>
         </div>
       </footer>

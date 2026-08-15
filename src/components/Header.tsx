@@ -1,7 +1,8 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { Shield, Key, History, Sparkles, CheckCircle2, AlertTriangle, Terminal, Layers } from "lucide-react";
+import Link from "next/link";
+import { Shield, Key, History, Sparkles, CheckCircle2, AlertTriangle, Terminal, Layers, Info } from "lucide-react";
 import { getScanHistory, getStoredApiKeys } from "@/lib/storage";
 import { ApiStatusResponse } from "@/types/threat";
 
@@ -48,8 +49,8 @@ export function Header({ onOpenSettings, onOpenHistory, historyUpdatedKey }: Hea
     <header className="border-b border-soc-border/80 bg-soc-darker/80 backdrop-blur-md sticky top-0 z-40">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
         {/* Brand Logo */}
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-soc-accent to-emerald-600 flex items-center justify-center shadow-lg shadow-soc-accent/20 border border-soc-accent/40">
+        <Link href="/" className="flex items-center gap-3 group">
+          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-soc-accent to-emerald-600 flex items-center justify-center shadow-lg shadow-soc-accent/20 border border-soc-accent/40 group-hover:scale-105 transition-transform">
             <Shield className="w-5 h-5 text-soc-darkest" />
           </div>
           <div>
@@ -65,10 +66,20 @@ export function Header({ onOpenSettings, onOpenHistory, historyUpdatedKey }: Hea
               Multi-Source Threat Intelligence & Malware Detection
             </p>
           </div>
-        </div>
+        </Link>
 
         {/* Right Navigation & Status Controls */}
-        <div className="flex items-center gap-2.5 sm:gap-3">
+        <div className="flex items-center gap-2 sm:gap-3">
+          {/* About Page Link */}
+          <Link
+            href="/about"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-soc-dark hover:bg-soc-border/60 text-gray-300 border border-soc-border text-xs font-mono transition-colors"
+            title="About ThreatVigil and user guide"
+          >
+            <Info className="w-3.5 h-3.5 text-soc-accent" />
+            <span className="hidden sm:inline">About</span>
+          </Link>
+
           {/* API Status Badge / Settings Button */}
           <button
             onClick={onOpenSettings}
