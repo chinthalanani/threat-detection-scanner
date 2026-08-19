@@ -15,7 +15,6 @@ import {
   Code2,
   Terminal,
   Mail,
-  Bug,
   Server,
 } from "lucide-react";
 
@@ -77,14 +76,6 @@ export function AboutSection() {
         "Inspect any domain name. Resolves authoritative DNS records (A, MX, NS, TXT), flags Newly Registered Domains (< 30 days) used in active campaigns, audits SSL/TLS certificate validity, and measures DGA algorithmic entropy.",
       tips: "Checks SPF, DMARC, and DKIM email authentication compliance.",
     },
-    {
-      icon: <Bug className="w-5 h-5 text-red-400" />,
-      title: "8. CVE Vulnerability & Exploit Intelligence",
-      badge: "NVD v2.0 • FIRST EPSS • CISA KEV Catalog",
-      description:
-        "Query Common Vulnerabilities and Exposures (e.g. CVE-2021-44228 Log4Shell). Retrieves CVSS v3.1 base score, attack vectors, real-world Exploit Prediction (EPSS) probabilities, CISA Known Exploited Vulnerability alerts, and mitigation advisories.",
-      tips: "Essential for vulnerability management, prioritizing zero-days and active weaponized exploits.",
-    },
   ];
 
   return (
@@ -97,12 +88,12 @@ export function AboutSection() {
           </div>
           <div>
             <h2 className="text-lg font-bold text-white">About ThreatVigil Threat Intelligence Platform</h2>
-            <p className="text-xs text-gray-400 font-mono">Real-time 8-in-1 cyber threat intelligence and vulnerability scanning suite</p>
+            <p className="text-xs text-gray-400 font-mono">Real-time 7-in-1 cyber threat intelligence scanning suite</p>
           </div>
         </div>
 
         <p className="text-xs sm:text-sm text-gray-300 leading-relaxed">
-          ThreatVigil is a unified cyber threat intelligence platform designed to help security analysts, developers, and everyday users detect phishing, malware, ransomware, abusive network nodes, credential leaks, and weaponized CVE exploits in real time.
+          ThreatVigil is a unified cyber threat intelligence platform designed to help security analysts, developers, and everyday users detect phishing, malware, ransomware, abusive network nodes, and credential leaks in real time.
         </p>
 
         {/* Feature Highlights Grid */}
@@ -113,7 +104,7 @@ export function AboutSection() {
               <span>Multi-Source Engine</span>
             </div>
             <p className="text-[11px] text-gray-400">
-              Aggregates telemetry from 70+ antivirus vendors with Google Safe Browsing, AbuseIPDB, NVD, and EPSS.
+              Aggregates telemetry from 70+ antivirus vendors with Google Safe Browsing and AbuseIPDB.
             </p>
           </div>
 
@@ -143,10 +134,10 @@ export function AboutSection() {
       <div className="space-y-4">
         <div className="flex items-center justify-between border-b border-soc-border/60 pb-2">
           <h3 className="text-base font-bold text-white flex items-center gap-2">
-            <span>How to Use the 8 Scanners</span>
+            <span>How to Use the 7 Scanners</span>
           </h3>
           <span className="text-xs font-mono text-soc-accent px-2 py-0.5 rounded bg-soc-accent/10 border border-soc-accent/30">
-            8 Modules
+            7 Modules
           </span>
         </div>
 

@@ -1,4 +1,4 @@
-export type ScanType = 'url' | 'ip' | 'hash' | 'file' | 'qr' | 'email' | 'domain' | 'cve' | 'about';
+export type ScanType = 'url' | 'ip' | 'hash' | 'file' | 'qr' | 'email' | 'domain' | 'about';
 
 export type Verdict = 'clean' | 'suspicious' | 'malicious' | 'unknown';
 
@@ -120,8 +120,6 @@ export interface FileScanResult extends Omit<HashScanResult, 'scanType'> {
   analysisId?: string;
 }
 
-// --- NEW SCANNERS ---
-
 export interface ExtractedEmailLink {
   url: string;
   isSuspicious: boolean;
@@ -131,7 +129,7 @@ export interface ExtractedEmailLink {
 export interface EmailScanResult {
   scanId: string;
   scanType: 'email';
-  target: string; // The email or snippet
+  target: string;
   emailAddress?: string;
   mode: 'address' | 'content';
   verdict: Verdict;
@@ -193,41 +191,13 @@ export interface DomainScanResult {
   isDemo?: boolean;
 }
 
-export interface CveScanResult {
-  scanId: string;
-  scanType: 'cve';
-  target: string; // e.g. CVE-2021-44228
-  verdict: Verdict;
-  threatScore: number; // 0 to 100
-  cveId: string;
-  cvssVersion: '3.1' | '3.0' | '2.0';
-  cvssScore: number; // 0.0 to 10.0
-  severity: 'CRITICAL' | 'HIGH' | 'MEDIUM' | 'LOW' | 'NONE';
-  vectorString?: string;
-  epssScore: number; // 0.0 to 1.0 (Exploit Prediction Scoring System)
-  epssPercentile: number;
-  isCisaKevKnownExploit: boolean; // In CISA Known Exploited Vulnerabilities catalog
-  cwe?: string;
-  cweName?: string;
-  description: string;
-  publishedDate: string;
-  lastModifiedDate: string;
-  affectedProducts: string[];
-  remediation?: string;
-  references: string[];
-  engines: EngineResult[];
-  timestamp: string;
-  isDemo?: boolean;
-}
-
 export type ScanResult = 
   | UrlScanResult 
   | IpScanResult 
   | HashScanResult 
   | FileScanResult 
   | EmailScanResult 
-  | DomainScanResult 
-  | CveScanResult;
+  | DomainScanResult;
 
 export interface HistoryItem {
   id: string;

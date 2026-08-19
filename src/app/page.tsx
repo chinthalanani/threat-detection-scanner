@@ -16,7 +16,6 @@ import {
   Search,
   Info,
   Mail,
-  Bug,
   Server,
 } from "lucide-react";
 import { Header } from "@/components/Header";
@@ -27,7 +26,6 @@ import { FileScanner } from "@/components/scanners/FileScanner";
 import { QrScanner } from "@/components/scanners/QrScanner";
 import { EmailScanner } from "@/components/scanners/EmailScanner";
 import { DomainScanner } from "@/components/scanners/DomainScanner";
-import { CveScanner } from "@/components/scanners/CveScanner";
 import { AboutSection } from "@/components/about/AboutSection";
 import { VerdictBanner } from "@/components/results/VerdictBanner";
 import { VendorMatrix } from "@/components/results/VendorMatrix";
@@ -76,7 +74,6 @@ export default function ThreatDashboard() {
     { id: "qr", label: "QR Scanner", icon: <QrCode className="w-3.5 h-3.5" /> },
     { id: "email", label: "Email / Phish", icon: <Mail className="w-3.5 h-3.5" /> },
     { id: "domain", label: "Domain & DNS", icon: <Server className="w-3.5 h-3.5" /> },
-    { id: "cve", label: "CVE Exploit", icon: <Bug className="w-3.5 h-3.5" /> },
     { id: "about", label: "About & Guide", icon: <Info className="w-3.5 h-3.5" /> },
   ];
 
@@ -103,7 +100,7 @@ export default function ThreatDashboard() {
           </h1>
 
           <p className="text-sm md:text-base text-gray-400 max-w-2xl mx-auto">
-            Scan suspicious URLs, IP addresses, hashes, files, QR codes, phishing emails, domains, and CVE vulnerabilities across 70+ security vendors.
+            Scan suspicious URLs, IP addresses, hashes, files, QR codes, phishing emails, and domains across 70+ security vendors.
           </p>
         </div>
 
@@ -139,7 +136,6 @@ export default function ThreatDashboard() {
           {activeTab === "qr" && <QrScanner onScanComplete={handleScanComplete} />}
           {activeTab === "email" && <EmailScanner onScanComplete={handleScanComplete} />}
           {activeTab === "domain" && <DomainScanner onScanComplete={handleScanComplete} />}
-          {activeTab === "cve" && <CveScanner onScanComplete={handleScanComplete} />}
           {activeTab === "about" && <AboutSection />}
         </div>
 

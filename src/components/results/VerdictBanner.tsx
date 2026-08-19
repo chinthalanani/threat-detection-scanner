@@ -166,22 +166,7 @@ export function VerdictBanner({ result }: VerdictBannerProps) {
           </div>
 
           {/* Quick stats pills tailored to scan type */}
-          {result.scanType === "cve" ? (
-            <div className="grid grid-cols-2 gap-2 text-center">
-              <div className="bg-soc-dark/80 border border-red-500/20 px-3 py-2 rounded-lg">
-                <div className="text-[11px] text-gray-400">CVSS v3.1</div>
-                <div className="text-lg font-bold font-mono text-red-400">
-                  {"cvssScore" in result ? result.cvssScore : 0} <span className="text-[10px] uppercase font-normal">{"severity" in result ? result.severity : ""}</span>
-                </div>
-              </div>
-              <div className="bg-soc-dark/80 border border-amber-500/20 px-3 py-2 rounded-lg">
-                <div className="text-[11px] text-gray-400">EPSS Exploit Prob.</div>
-                <div className="text-lg font-bold font-mono text-amber-400">
-                  {"epssScore" in result ? `${(result.epssScore * 100).toFixed(1)}%` : "0%"}
-                </div>
-              </div>
-            </div>
-          ) : result.scanType === "email" ? (
+          {result.scanType === "email" ? (
             <div className="grid grid-cols-2 gap-2 text-center">
               <div className="bg-soc-dark/80 border border-soc-border px-3 py-2 rounded-lg">
                 <div className="text-[11px] text-gray-400">Breaches Exposed</div>

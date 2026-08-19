@@ -102,8 +102,6 @@ export function HistoryDrawer({ isOpen, onClose, onSelectScan }: HistoryDrawerPr
         return <Globe className="w-3.5 h-3.5 text-blue-400" />;
       case "domain":
         return <Network className="w-3.5 h-3.5 text-emerald-400" />;
-      case "cve":
-        return <ShieldAlert className="w-3.5 h-3.5 text-red-400" />;
       default:
         return <HelpCircle className="w-3.5 h-3.5 text-gray-400" />;
     }
@@ -141,7 +139,7 @@ export function HistoryDrawer({ isOpen, onClose, onSelectScan }: HistoryDrawerPr
             <Search className="w-3.5 h-3.5 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" />
             <input
               type="text"
-              placeholder="Search target, domain, IP, hash, CVE..."
+              placeholder="Search target, domain, IP, or hash..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               className="w-full pl-9 pr-3 py-2 text-xs font-mono rounded-lg bg-soc-dark border border-soc-border text-white placeholder-gray-500 focus:outline-none focus:border-soc-accent"
@@ -151,7 +149,7 @@ export function HistoryDrawer({ isOpen, onClose, onSelectScan }: HistoryDrawerPr
           {/* Filter Pills & Actions */}
           <div className="flex items-center justify-between gap-2">
             <div className="flex items-center gap-1 overflow-x-auto text-[11px] font-mono pb-1">
-              {["all", "url", "ip", "hash", "file", "email", "domain", "cve"].map((t) => (
+              {["all", "url", "ip", "hash", "file", "email", "domain"].map((t) => (
                 <button
                   key={t}
                   onClick={() => setTypeFilter(t)}

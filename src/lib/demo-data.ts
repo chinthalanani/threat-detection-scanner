@@ -1,5 +1,4 @@
 import {
-  CveScanResult,
   DomainScanResult,
   EmailScanResult,
   FileScanResult,
@@ -40,12 +39,6 @@ export const SAMPLE_TARGETS = {
     { label: "Legitimate Enterprise (Microsoft)", value: "microsoft.com" },
     { label: "Clean Tech Domain (GitHub)", value: "github.com" },
   ],
-  cve: [
-    { label: "Log4Shell (RCE 10.0 Critical)", value: "CVE-2021-44228" },
-    { label: "Windows RDL Remote Execution", value: "CVE-2024-38077" },
-    { label: "MOVEit Transfer SQLi / Zero-Day", value: "CVE-2023-34362" },
-    { label: "Moniker Link Outlook RCE", value: "CVE-2024-21413" },
-  ]
 };
 
 // Known malware hash signatures dictionary
@@ -522,138 +515,6 @@ export function getDemoDomainScan(domainInput: string): DomainScanResult {
     categories: {
       "Reputation": isMalicious ? "Newly Registered Phishing Candidate" : "Established Enterprise Technology",
     },
-    timestamp: new Date().toISOString(),
-    isDemo: true,
-  };
-}
-
-const KNOWN_CVE_DATABASE: Record<string, Partial<CveScanResult>> = {
-  "CVE-2021-44228": {
-    cveId: "CVE-2021-44228",
-    cvssVersion: "3.1",
-    cvssScore: 10.0,
-    severity: "CRITICAL",
-    vectorString: "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:C/C:H/I:H/A:H",
-    epssScore: 0.9754,
-    epssPercentile: 99.9,
-    isCisaKevKnownExploit: true,
-    cwe: "CWE-502 / CWE-400",
-    cweName: "Deserialization of Untrusted Data / JNDI Injection",
-    description: "Apache Log4j2 JNDI features used in configuration, log messages, and parameters do not protect against attacker controlled LDAP and other JNDI related endpoints. Allows unauthenticated Remote Code Execution (RCE).",
-    publishedDate: "2021-12-10",
-    lastModifiedDate: "2024-05-18",
-    affectedProducts: ["Apache Log4j 2.0-beta9 through 2.15.0", "Elasticsearch", "VMware vCenter", "Minecraft Servers"],
-    remediation: "Upgrade Apache Log4j to version 2.17.1 or higher, or set log4j2.formatMsgNoLookups=true.",
-    references: [
-      "https://nvd.nist.gov/vuln/detail/CVE-2021-44228",
-      "https://www.cisa.gov/known-exploited-vulnerabilities-catalog",
-      "https://logging.apache.org/log4j/2.x/security.html"
-    ],
-  },
-  "CVE-2024-38077": {
-    cveId: "CVE-2024-38077",
-    cvssVersion: "3.1",
-    cvssScore: 9.8,
-    severity: "CRITICAL",
-    vectorString: "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H",
-    epssScore: 0.8841,
-    epssPercentile: 98.6,
-    isCisaKevKnownExploit: true,
-    cwe: "CWE-122",
-    cweName: "Heap-based Buffer Overflow",
-    description: "Windows Remote Desktop Licensing Service Remote Code Execution Vulnerability (MadLicense). An unauthenticated attacker can send specially crafted packets to compromise Windows Server systems running RDL.",
-    publishedDate: "2024-07-09",
-    lastModifiedDate: "2024-08-01",
-    affectedProducts: ["Windows Server 2008 through Windows Server 2022"],
-    remediation: "Apply Microsoft July 2024 Patch Tuesday cumulative security updates immediately.",
-    references: [
-      "https://msrc.microsoft.com/update-guide/vulnerability/CVE-2024-38077",
-      "https://nvd.nist.gov/vuln/detail/CVE-2024-38077"
-    ],
-  },
-  "CVE-2023-34362": {
-    cveId: "CVE-2023-34362",
-    cvssVersion: "3.1",
-    cvssScore: 9.8,
-    severity: "CRITICAL",
-    vectorString: "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H",
-    epssScore: 0.9748,
-    epssPercentile: 99.8,
-    isCisaKevKnownExploit: true,
-    cwe: "CWE-89",
-    cweName: "SQL Injection",
-    description: "MOVEit Transfer Web Application SQL Injection Vulnerability. Exploited extensively in ransomware mass data-theft campaigns by the CL0P ransomware syndicate.",
-    publishedDate: "2023-06-02",
-    lastModifiedDate: "2024-03-20",
-    affectedProducts: ["Progress Software MOVEit Transfer all versions before 2021.0.6, 2022.0.4, 2023.0.1"],
-    remediation: "Upgrade MOVEit Transfer to patched build and audit database access logs for web shells (human2.aspx).",
-    references: [
-      "https://www.cisa.gov/news-events/cybersecurity-advisories/aa23-158a",
-      "https://nvd.nist.gov/vuln/detail/CVE-2023-34362"
-    ],
-  },
-  "CVE-2024-21413": {
-    cveId: "CVE-2024-21413",
-    cvssVersion: "3.1",
-    cvssScore: 9.8,
-    severity: "CRITICAL",
-    vectorString: "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H",
-    epssScore: 0.9120,
-    epssPercentile: 98.9,
-    isCisaKevKnownExploit: true,
-    cwe: "CWE-20",
-    cweName: "Improper Input Validation (Moniker Link RCE)",
-    description: "Microsoft Outlook Remote Code Execution Vulnerability (MonikerLink). Bypasses Protected View and triggers NTLM credential leaks or code execution upon viewing crafted hyperlink.",
-    publishedDate: "2024-02-13",
-    lastModifiedDate: "2024-06-11",
-    affectedProducts: ["Microsoft Office 2016, 2019, LTSC 2021, Microsoft 365 Apps for Enterprise"],
-    remediation: "Apply Microsoft February 2024 Office security updates.",
-    references: [
-      "https://msrc.microsoft.com/update-guide/vulnerability/CVE-2024-21413",
-      "https://nvd.nist.gov/vuln/detail/CVE-2024-21413"
-    ],
-  }
-};
-
-export function getDemoCveScan(cveInput: string): CveScanResult {
-  const cleanId = cveInput.trim().toUpperCase();
-  const known = KNOWN_CVE_DATABASE[cleanId];
-
-  const cvssScore = known?.cvssScore || 8.5;
-  const severity = known?.severity || (cvssScore >= 9.0 ? "CRITICAL" : cvssScore >= 7.0 ? "HIGH" : "MEDIUM");
-  const epssScore = known?.epssScore || 0.65;
-  const isCisa = known?.isCisaKevKnownExploit ?? true;
-
-  const engines = [
-    { engineName: "National Vulnerability Database (NVD)", category: cvssScore >= 7.0 ? "malicious" as const : "suspicious" as const, result: `CVSS Base Score: ${cvssScore} ${severity}` },
-    { engineName: "CISA KEV Exploitation Feed", category: isCisa ? "malicious" as const : "harmless" as const, result: isCisa ? "Active Exploitation in the Wild Detected" : "No Known KEV Exploits" },
-    { engineName: "FIRST EPSS Predictor", category: epssScore > 0.5 ? "malicious" as const : "harmless" as const, result: `EPSS Probability: ${(epssScore * 100).toFixed(1)}%` },
-    { engineName: "MITRE CVE Authority", category: "harmless" as const, result: "Verified Public CVE Record" },
-  ];
-
-  return {
-    scanId: `scan_cve_${Date.now()}`,
-    scanType: "cve",
-    target: cleanId,
-    verdict: cvssScore >= 9.0 ? "malicious" : (cvssScore >= 7.0 ? "suspicious" : "clean"),
-    threatScore: Math.round(cvssScore * 10),
-    cveId: cleanId,
-    cvssVersion: known?.cvssVersion || "3.1",
-    cvssScore,
-    severity,
-    vectorString: known?.vectorString || "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H",
-    epssScore,
-    epssPercentile: known?.epssPercentile || 95.0,
-    isCisaKevKnownExploit: isCisa,
-    cwe: known?.cwe || "CWE-20",
-    cweName: known?.cweName || "Improper Input Validation",
-    description: known?.description || `Vulnerability record for ${cleanId}. Security defect allowing potential privilege escalation or remote code execution.`,
-    publishedDate: known?.publishedDate || "2023-01-15",
-    lastModifiedDate: known?.lastModifiedDate || new Date().toISOString().split("T")[0],
-    affectedProducts: known?.affectedProducts || ["Enterprise Software Component v1.0 - v3.4"],
-    remediation: known?.remediation || "Apply official vendor security patch and restrict perimeter network exposure.",
-    references: known?.references || [`https://nvd.nist.gov/vuln/detail/${cleanId}`],
-    engines,
     timestamp: new Date().toISOString(),
     isDemo: true,
   };

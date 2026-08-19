@@ -17,12 +17,10 @@ import {
   User,
   MapPin,
   Mail,
-  Bug,
   Lock,
   ExternalLink,
   AlertTriangle,
   CheckCircle2,
-  XCircle,
   FileText,
 } from "lucide-react";
 
@@ -81,20 +79,6 @@ export function ReportDetails({ result }: ReportDetailsProps) {
           >
             <Globe className="w-3.5 h-3.5" />
             <span>DNS & SSL Security</span>
-          </button>
-        )}
-
-        {result.scanType === "cve" && (
-          <button
-            onClick={() => setActiveTab("cve_details")}
-            className={`px-4 py-3 border-b-2 flex items-center gap-2 whitespace-nowrap transition-colors ${
-              activeTab === "cve_details"
-                ? "border-soc-accent text-soc-accent font-semibold bg-soc-dark/40"
-                : "border-transparent text-gray-400 hover:text-gray-200"
-            }`}
-          >
-            <Bug className="w-3.5 h-3.5" />
-            <span>Exploit & Remediation</span>
           </button>
         )}
 
@@ -236,45 +220,6 @@ export function ReportDetails({ result }: ReportDetailsProps) {
                   <div className="font-mono text-xs md:text-sm text-emerald-400 font-medium">
                     {result.sslCertificate?.valid ? `Valid (${result.sslCertificate.daysRemaining}d left)` : "Invalid / Expired"}
                   </div>
-                </div>
-              </>
-            )}
-
-            {/* CVE Overview */}
-            {result.scanType === "cve" && (
-              <>
-                <div className="p-4 rounded-lg bg-soc-darker/60 border border-soc-border/60">
-                  <div className="text-xs text-gray-400 font-mono flex items-center gap-1.5 mb-1">
-                    <Bug className="w-3.5 h-3.5 text-red-400" />
-                    CVSS Severity Rating
-                  </div>
-                  <div className="font-mono text-sm text-red-400 font-bold">
-                    {result.cvssScore} / 10.0 ({result.severity})
-                  </div>
-                </div>
-
-                <div className="p-4 rounded-lg bg-soc-darker/60 border border-soc-border/60">
-                  <div className="text-xs text-gray-400 font-mono flex items-center gap-1.5 mb-1">
-                    <AlertTriangle className="w-3.5 h-3.5 text-amber-400" />
-                    CISA KEV Status
-                  </div>
-                  <div className="font-mono text-xs md:text-sm text-white font-medium">
-                    {result.isCisaKevKnownExploit ? (
-                      <span className="text-red-400 font-bold">Known Weaponized Exploit</span>
-                    ) : (
-                      <span className="text-emerald-400">No Automated Exploits</span>
-                    )}
-                  </div>
-                </div>
-
-                <div className="p-4 rounded-lg bg-soc-darker/60 border border-soc-border/60 md:col-span-3">
-                  <div className="text-xs text-gray-400 font-mono flex items-center gap-1.5 mb-1">
-                    <FileText className="w-3.5 h-3.5 text-soc-accent" />
-                    Vulnerability Description
-                  </div>
-                  <p className="font-mono text-xs text-gray-200 leading-relaxed mt-1">
-                    {result.description}
-                  </p>
                 </div>
               </>
             )}
@@ -497,69 +442,6 @@ export function ReportDetails({ result }: ReportDetailsProps) {
                 </div>
               </div>
             )}
-          </div>
-        )}
-
-        {/* CVE Exploit & Remediation Tab */}
-        {activeTab === "cve_details" && result.scanType === "cve" && (
-          <div className="space-y-4">
-            {/* Vector String & EPSS */}
-            <div className="p-4 rounded-lg bg-soc-darker/70 border border-soc-border/60 space-y-2">
-              <h4 className="text-xs font-mono font-bold text-white flex items-center gap-1.5">
-                <Bug className="w-4 h-4 text-red-400" />
-                <span>CVSS Vector String & Weakness</span>
-              </h4>
-              <div className="font-mono text-xs text-soc-accent bg-soc-dark p-2.5 rounded border border-soc-border">
-                {result.vectorString}
-              </div>
-              <div className="text-xs font-mono text-gray-300">
-                <span className="text-gray-400">Weakness:</span> {result.cwe} ({result.cweName})
-              </div>
-            </div>
-
-            {/* Affected Products */}
-            <div className="p-4 rounded-lg bg-soc-darker/70 border border-soc-border/60 space-y-2">
-              <h4 className="text-xs font-mono font-bold text-white flex items-center gap-1.5">
-                <Layers className="w-4 h-4 text-amber-400" />
-                <span>Known Affected Products</span>
-              </h4>
-              <div className="flex flex-wrap gap-1.5 font-mono text-xs">
-                {result.affectedProducts.map((prod, idx) => (
-                  <span key={idx} className="px-2.5 py-1 rounded bg-soc-dark border border-soc-border text-gray-200">
-                    {prod}
-                  </span>
-                ))}
-              </div>
-            </div>
-
-            {/* Remediation & References */}
-            <div className="p-4 rounded-lg bg-soc-darker/70 border border-soc-border/60 space-y-2">
-              <h4 className="text-xs font-mono font-bold text-white flex items-center gap-1.5">
-                <Shield className="w-4 h-4 text-emerald-400" />
-                <span>Remediation & Patching Advisory</span>
-              </h4>
-              <p className="text-xs font-mono text-gray-200 bg-soc-dark p-3 rounded border border-soc-border leading-relaxed">
-                {result.remediation}
-              </p>
-
-              <div className="pt-1">
-                <div className="text-xs font-mono text-gray-400 mb-1">Authoritative References:</div>
-                <div className="space-y-1 text-xs font-mono">
-                  {result.references.map((ref, idx) => (
-                    <a
-                      key={idx}
-                      href={ref}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="flex items-center gap-1 text-soc-accent hover:underline truncate"
-                    >
-                      <ExternalLink className="w-3 h-3 flex-shrink-0" />
-                      <span className="truncate">{ref}</span>
-                    </a>
-                  ))}
-                </div>
-              </div>
-            </div>
           </div>
         )}
 

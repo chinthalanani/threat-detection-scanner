@@ -8,7 +8,7 @@
 **Project Role:** Lead Creator & Full-Stack Architect  
 **Live Production URL:** [https://threat-detection-scanner-opal.vercel.app](https://threat-detection-scanner-opal.vercel.app)  
 **GitHub Repository:** [https://github.com/chinthalanani/threat-detection-scanner](https://github.com/chinthalanani/threat-detection-scanner)  
-**Technology Stack:** Next.js 14 (App Router), React, TypeScript, Tailwind CSS, VirusTotal API v3, AbuseIPDB API v2, Google Safe Browsing API v4, NVD v2.0, FIRST EPSS, Web Crypto API, jsQR  
+**Technology Stack:** Next.js 14 (App Router), React, TypeScript, Tailwind CSS, VirusTotal API v3, AbuseIPDB API v2, Google Safe Browsing API v4, Web Crypto API, jsQR  
 **Date:** August 2026  
 
 ---
@@ -18,7 +18,7 @@
 2. [Problem Statement](#2-problem-statement)
 3. [Project Objectives & Scope](#3-project-objectives--scope)
 4. [System Architecture & Data Flow](#4-system-architecture--data-flow)
-5. [Detailed Module Breakdown (8 Threat Scanners)](#5-detailed-module-breakdown-8-threat-scanners)
+5. [Detailed Module Breakdown (7 Threat Scanners)](#5-detailed-module-breakdown-7-threat-scanners)
    - [5.1 URL Threat Scanner & Redirect Tracer](#51-url-threat-scanner--redirect-tracer)
    - [5.2 IP Reputation & Threat Lookup](#52-ip-reputation--threat-lookup)
    - [5.3 Cryptographic Hash Lookup](#53-cryptographic-hash-lookup)
@@ -26,9 +26,8 @@
    - [5.5 QR Code Threat Scanner (Quishing Shield)](#55-qr-code-threat-scanner-quishing-shield)
    - [5.6 Email & Phishing Threat Scanner](#56-email--phishing-threat-scanner)
    - [5.7 Domain & WHOIS / DNS Security Scanner](#57-domain--whois--dns-security-scanner)
-   - [5.8 CVE Vulnerability & Exploit Intelligence Scanner](#58-cve-vulnerability--exploit-intelligence-scanner)
-   - [5.9 Security Operations Center (SOC) UI/UX](#59-security-operations-center-soc-uiux)
-   - [5.10 Security, Rate Limiting & Proxy Architecture](#510-security-rate-limiting--proxy-architecture)
+   - [5.8 Security Operations Center (SOC) UI/UX](#58-security-operations-center-soc-uiux)
+   - [5.9 Security, Rate Limiting & Proxy Architecture](#59-security-rate-limiting--proxy-architecture)
 6. [Technology Stack & Tools Used](#6-technology-stack--tools-used)
 7. [Threat Intelligence API Integrations](#7-threat-intelligence-api-integrations)
 8. [Testing & Quality Assurance](#8-testing--quality-assurance)
@@ -39,9 +38,9 @@
 
 ## 1. Executive Summary / Abstract
 
-In the modern digital landscape, cyber threats have evolved beyond simple malicious attachments into complex multi-vector campaigns encompassing credential harvesting phishing websites, QR code deceptive payloads (**Quishing**), stealth IP loggers, dynamic C2 (Command & Control) botnet infrastructures, brand typo-squatting, weaponized CVE zero-day exploits, and sophisticated obfuscated binaries.
+In the modern digital landscape, cyber threats have evolved beyond simple malicious attachments into complex multi-vector campaigns encompassing credential harvesting phishing websites, QR code deceptive payloads (**Quishing**), stealth IP loggers, dynamic C2 (Command & Control) botnet infrastructures, brand typo-squatting, and sophisticated obfuscated binaries.
 
-**ThreatVigil** is a full-stack, enterprise-grade Cyber Threat Intelligence and Malware Detection Web Application developed by **Chinthala Nani**. The platform provides automated, multi-source cybersecurity threat evaluation across **eight critical vectors**:
+**ThreatVigil** is a full-stack, enterprise-grade Cyber Threat Intelligence and Malware Detection Web Application developed by **Chinthala Nani**. The platform provides automated, multi-source cybersecurity threat evaluation across **seven critical vectors**:
 1. **URLs & Shortlinks**
 2. **IPv4 / IPv6 Addresses**
 3. **Cryptographic File Hashes** (MD5, SHA-1, SHA-256)
@@ -49,33 +48,32 @@ In the modern digital landscape, cyber threats have evolved beyond simple malici
 5. **QR Codes** (with client-side image decoding and live webcam reticle)
 6. **Email Addresses & Phishing Content** (disposable inbox detection, brand typo-squatting, breach lookups)
 7. **Domains & WHOIS / DNS Records** (domain age, SSL certificate health, SPF/DMARC, DGA entropy)
-8. **CVE Vulnerabilities** (CVSS v3.1 base score, FIRST EPSS exploit likelihood, CISA KEV weaponization)
 
-By leveraging real-time telemetry from **70+ authoritative antivirus vendors (via VirusTotal API v3)**, **AbuseIPDB API v2**, **Google Safe Browsing API v4**, **National Vulnerability Database (NVD)**, and **FIRST EPSS**, alongside custom heuristics and client-side privacy algorithms, ThreatVigil empowers security analysts, incident responders, developers, and everyday internet users with instant, actionable threat verdicts.
+By leveraging real-time telemetry from **70+ authoritative antivirus vendors (via VirusTotal API v3)**, **AbuseIPDB API v2**, and **Google Safe Browsing API v4**, alongside custom heuristics and client-side privacy algorithms, ThreatVigil empowers security analysts, incident responders, developers, and everyday internet users with instant, actionable threat verdicts.
 
 ---
 
 ## 2. Problem Statement
 
-1. **Information Fragmentation**: Threat telemetry is scattered across disjointed platforms (VirusTotal, AbuseIPDB, Google Safe Browsing, WHOIS, NVD), forcing analysts to waste critical minutes manually aggregating data.
+1. **Information Fragmentation**: Threat telemetry is scattered across disjointed platforms (VirusTotal, AbuseIPDB, Google Safe Browsing, WHOIS), forcing analysts to waste critical minutes manually aggregating data.
 2. **Bandwidth & Privacy Inefficiencies**: Traditional cloud scanners require uploading entire multi-megabyte binaries over the network before checking if they are already known malware samples.
 3. **Emergence of Quishing & Stealth Trackers**: Users scanning QR codes on mobile devices or receiving disguised tracking links (`iplogger`, `grabify`) are vulnerable to silent IP logging, geolocation harvesting, and credential theft.
 4. **Email Spoofing & Phishing Urgency**: Attackers exploit homoglyph domains (`paypa1.com`) and throwaway email providers to deceive victims with high-urgency financial lures.
-5. **Unprioritized Vulnerabilities**: Overwhelmed engineering teams struggle to distinguish between low-priority CVEs and actively weaponized zero-days.
+5. **Quota Exhaustion & API Key Exposure**: Exposing commercial or free-tier threat intel keys client-side leads to security vulnerabilities and quota depletion.
 
-ThreatVigil solves these challenges by uniting 8-in-1 multi-source intelligence, client-side pre-hashing, built-in tracker shields, and secure serverless proxying under a sleek, dark SOC analyst workstation interface.
+ThreatVigil solves these challenges by uniting 7-in-1 multi-source intelligence, client-side pre-hashing, built-in tracker shields, and secure serverless proxying under a sleek, dark SOC analyst workstation interface.
 
 ---
 
 ## 3. Project Objectives & Scope
 
-- **Unified 8-in-1 Threat Intelligence Suite**: Seamlessly analyze URLs, IPs, Hashes, Files, QR codes, Emails, Domains, and CVE vulnerabilities in a single dashboard.
-- **Authoritative Multi-Source Feeds**: Query 70+ AV engines (Kaspersky, Sophos, BitDefender, Microsoft Defender, CrowdStrike, ESET) concurrently with Google Safe Browsing, AbuseIPDB, NVD, and EPSS.
+- **Unified 7-in-1 Threat Intelligence Suite**: Seamlessly analyze URLs, IPs, Hashes, Files, QR codes, Emails, and Domains in a single dashboard.
+- **Authoritative Multi-Source Feeds**: Query 70+ AV engines (Kaspersky, Sophos, BitDefender, Microsoft Defender, CrowdStrike, ESET) concurrently with Google Safe Browsing and AbuseIPDB.
 - **Client-Side Privacy & Bandwidth Optimization**: Compute SHA-256 digests in-browser using the Web Crypto API to check hash databases before uploading large files.
 - **In-Browser QR Decoding**: Decode QR codes client-side via image upload or live webcam streams without sending raw video feeds across the internet.
 - **Tracker & IP Logger Shield**: Proactively detect and neutralize IP grabbers (`iplogger.com`, `grabify.link`, `2no.co`, `yip.su`, etc.) and follow HTTP 301/302 redirects.
 - **Email Phishing & Typo-squatting Protection**: Screen for 500+ disposable domains, brand impersonations, and extract embedded links for auto-scanning.
-- **Zero-Setup Usability**: Support a dual-mode engine that operates in full live API mode or interactive realistic simulation mode with built-in test signatures (e.g. EICAR, WannaCry, Cobalt Strike C2, Log4Shell).
+- **Zero-Setup Usability**: Support a dual-mode engine that operates in full live API mode or interactive realistic simulation mode with built-in test signatures (e.g. EICAR, WannaCry, Cobalt Strike C2).
 
 ---
 
@@ -85,9 +83,9 @@ ThreatVigil solves these challenges by uniting 8-in-1 multi-source intelligence,
 ┌───────────────────────────────────────────────────────────────────────────────────────────┐
 │                                   CLIENT BROWSER (React)                                  │
 │  ┌─────────────────────────┐  ┌───────────────────────────┐  ┌─────────────────────────┐  │
-│  │ 8 Scanner Input Modules │  │ Web Crypto SHA-256        │  │ jsQR Engine             │  │
+│  │ 7 Scanner Input Modules │  │ Web Crypto SHA-256        │  │ jsQR Engine             │  │
 │  │ (URL/IP/Hash/File/QR/   │  │ In-Browser Hashing        │  │ Client QR Decoding      │  │
-│  │  Email/Domain/CVE)      │  │                           │  │ (Drag-Drop / Webcam)    │  │
+│  │  Email/Domain)          │  │                           │  │ (Drag-Drop / Webcam)    │  │
 │  └────────────┬────────────┘  └─────────────┬─────────────┘  └────────────┬────────────┘  │
 │               └─────────────────────────────┼─────────────────────────────┘               │
 │                                             ▼                                             │
@@ -102,7 +100,7 @@ ThreatVigil solves these challenges by uniting 8-in-1 multi-source intelligence,
 │  └──────────────────────────────────────────┬──────────────────────────────────────────┘  │
 │                                             ▼                                             │
 │  ┌─────────────────────────────────────────────────────────────────────────────────────┐  │
-│  │ Input Validation & Sanitization (IPv4/IPv6, MD5/SHA1/SHA256, URL, Domain, CVE, Email)│  │
+│  │ Input Validation & Sanitization (IPv4/IPv6, MD5/SHA1/SHA256, URL, Domain, Email)    │  │
 │  └──────────────────────────────────────────┬──────────────────────────────────────────┘  │
 │                                             ▼                                             │
 │  ┌─────────────────────────────────────────────────────────────────────────────────────┐  │
@@ -110,18 +108,18 @@ ThreatVigil solves these challenges by uniting 8-in-1 multi-source intelligence,
 │  └──────────────────────────────────────────┬──────────────────────────────────────────┘  │
 └─────────────────────────────────────────────┼─────────────────────────────────────────────┘
                                               │
-        ┌───────────────────┬─────────────────┼─────────────────┬───────────────────┐
-        ▼                   ▼                 ▼                 ▼                   ▼
-┌───────────────┐   ┌───────────────┐ ┌───────────────┐ ┌───────────────┐   ┌───────────────┐
-│VirusTotal v3  │   │ AbuseIPDB v2  │ │Google Safe-   │ │  NVD API v2.0 │   │FIRST.org EPSS │
-│(70+ AV Engines│   │ (IP Abuse &   │ │   Browsing    │ │ (CVSS Metrics │   │ (Exploit Prob.│
-│ & File Hashes)│   │  Reputation)  │ │(Phish/Malware)│ │ & Weaknesses) │   │  Predictions) │
-└───────────────┘   └───────────────┘ └───────────────┘ └───────────────┘   └───────────────┘
+                    ┌─────────────────────────┼─────────────────────────┐
+                    ▼                         ▼                         ▼
+          ┌───────────────────┐     ┌───────────────────┐     ┌───────────────────┐
+          │ VirusTotal API v3 │     │  AbuseIPDB API v2 │     │Google SafeBrowsing│
+          │(70+ AV Engines &  │     │(IP Abuse Scores & │     │(Phishing & Malware│
+          │ File Hash Feeds)  │     │ Incident Reports) │     │ Domain Blacklists)│
+          └───────────────────┘     └───────────────────┘     └───────────────────┘
 ```
 
 ---
 
-## 5. Detailed Module Breakdown (8 Threat Scanners)
+## 5. Detailed Module Breakdown (7 Threat Scanners)
 
 ### 5.1 URL Threat Scanner & Redirect Tracer
 - **Endpoints**: `POST /api/scan/url`
@@ -179,23 +177,14 @@ ThreatVigil solves these challenges by uniting 8-in-1 multi-source intelligence,
   - Evaluates **SPF, DMARC, and DKIM** email security compliance.
   - Computes **Shannon Entropy for DGA (Domain Generation Algorithm)** detection.
 
-### 5.8 CVE Vulnerability & Exploit Intelligence Scanner
-- **Endpoints**: `POST /api/scan/cve`
-- **Capabilities**:
-  - Validates and parses CVE identifiers (e.g. `CVE-2021-44228`, `CVE-2024-38077`).
-  - Queries **National Vulnerability Database (NVD v2.0)** for CVSS v3.1 base score, attack vectors, and CWE classifications.
-  - Queries **FIRST.org EPSS** for real-world exploit probability (0.0 to 1.0) and percentile ranking.
-  - Cross-references the **CISA Known Exploited Vulnerabilities (KEV)** catalog to flag actively weaponized zero-days.
-  - Provides actionable vendor mitigation advisories and authoritative reference links.
-
-### 5.9 Security Operations Center (SOC) UI/UX
+### 5.8 Security Operations Center (SOC) UI/UX
 - **Verdict Banner**: Visual threat level display (**Clean** / **Suspicious** / **Malicious** / **Unknown**) with circular Risk Index meter (0-100).
 - **Vendor Detection Matrix**: Filterable, searchable table displaying individual flags for all 70+ security vendors.
-- **Report Details**: Deep technical tabs (Overview, Phishing Indicators, DNS & SSL, CVE Exploits, Signatures, Abuse Incident Logs, Raw JSON).
+- **Report Details**: Deep technical tabs (Overview, Phishing Indicators, DNS & SSL, Signatures, Abuse Incident Logs, Raw JSON).
 - **Scan History Manager**: Persists past scans in `localStorage` with type filters, 1-click reload, and JSON download.
 - **Interactive About Page**: Comprehensive user guide, API key tutorials, and creator attribution (**Developed by Chinthala Nani**).
 
-### 5.10 Security, Rate Limiting & Proxy Architecture
+### 5.9 Security, Rate Limiting & Proxy Architecture
 - **Server-Side Secret Protection**: External API keys reside safely in server environment variables and are never leaked to client browsers.
 - **In-Memory Sliding Window Rate Limiter**: Limits requests per IP (15-20 req/min) to safeguard free-tier API quotas.
 - **Client Custom Key Override**: Users can optionally supply their own API keys via the **API Settings** modal stored in their local browser.
@@ -213,7 +202,7 @@ ThreatVigil solves these challenges by uniting 8-in-1 multi-source intelligence,
 | **QR Code Engine** | **jsQR 1.4** | In-browser QR code matrix extraction from images & video |
 | **Client Hashing** | **Web Crypto API** | Native high-speed in-browser SHA-256 calculation |
 | **Feedback Animations**| **Canvas-Confetti** | Celebration visual when clean scans are confirmed |
-| **Backend & Routing** | **Next.js API Routes** | Secure serverless API proxies for VirusTotal, AbuseIPDB, GSB, NVD, EPSS |
+| **Backend & Routing** | **Next.js API Routes** | Secure serverless API proxies for VirusTotal, AbuseIPDB, GSB |
 | **Hosting & CI/CD** | **Vercel Cloud Platform** | Global CDN deployment, automatic SSL, and 24/7 serverless runtime |
 | **Version Control** | **Git & GitHub** | Source code version control and continuous deployment pipeline |
 
@@ -233,10 +222,6 @@ ThreatVigil solves these challenges by uniting 8-in-1 multi-source intelligence,
 ├────────────────────────┼───────────────────┼──────────────────────────────────────────┤
 │ Google Safe Browsing v4│ 10,000 req/day    │ Social Engineering, Malware distribution,│
 │                        │                   │ and Phishing domain identification       │
-├────────────────────────┼───────────────────┼──────────────────────────────────────────┤
-│ FIRST.org EPSS API     │ Unlimited / Free  │ Real-world Exploit Prediction Scoring    │
-├────────────────────────┼───────────────────┼──────────────────────────────────────────┤
-│ NVD REST API v2.0      │ Unlimited / Free  │ CVSS v3.1 base score, attack vectors, CWE│
 └────────────────────────┴───────────────────┴──────────────────────────────────────────┘
 ```
 
@@ -255,12 +240,11 @@ npm run build
 ### 8.2 Heuristic & Test Payload Validation
 1. **Email Scanner Test**: Scanned `security-alert@paypa1-account-verification.com` → Correctly flagged as **Malicious (Typosquatting target: PayPal Inc., Risk Score: 92/100)**.
 2. **Domain Scanner Test**: Scanned `secure-login-apple-support-auth892.xyz` → Flagged as **Malicious Newly Registered Phishing Domain with High DGA Entropy**.
-3. **CVE Exploit Test**: Scanned `CVE-2021-44228` (Log4Shell) → Evaluated as **10.0 CRITICAL with 97.5% EPSS Exploit Probability and CISA KEV Alert**.
-4. **IP Logger Test**: Scanned `https://iplogger.com/2fEeb6` → Correctly intercepted by the *ThreatVigil Privacy Shield* and flagged as **Malicious IP Logger / Tracking Redirect** (Risk Index: 90/100).
-5. **EICAR Standard Antivirus Test**: Evaluated EICAR test string and hash → Instantly identified as **EICAR-Test-File** across all engines.
-6. **WannaCry Ransomware Hash**: Scanned `ed01ebf83334a19373140c2a21f4ea96fc51e07dc43141400d31654a260e40cb` → Categorized as **WannaCry.Ransomware.Cryptor** (Threat Score: 96/100).
-7. **Clean DNS IP Test**: Scanned `8.8.8.8` (Google DNS) → Verified 0% abuse score, 100% clean verdict.
-8. **QR Code Webcam Test**: Tested live webcam video stream with camera reticle → Successfully decoded embedded payload within 100ms.
+3. **IP Logger Test**: Scanned `https://iplogger.com/2fEeb6` → Correctly intercepted by the *ThreatVigil Privacy Shield* and flagged as **Malicious IP Logger / Tracking Redirect** (Risk Index: 90/100).
+4. **EICAR Standard Antivirus Test**: Evaluated EICAR test string and hash → Instantly identified as **EICAR-Test-File** across all engines.
+5. **WannaCry Ransomware Hash**: Scanned `ed01ebf83334a19373140c2a21f4ea96fc51e07dc43141400d31654a260e40cb` → Categorized as **WannaCry.Ransomware.Cryptor** (Threat Score: 96/100).
+6. **Clean DNS IP Test**: Scanned `8.8.8.8` (Google DNS) → Verified 0% abuse score, 100% clean verdict.
+7. **QR Code Webcam Test**: Tested live webcam video stream with camera reticle → Successfully decoded embedded payload within 100ms.
 
 ---
 
