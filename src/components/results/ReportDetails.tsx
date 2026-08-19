@@ -16,6 +16,14 @@ import {
   Server,
   User,
   MapPin,
+  Mail,
+  Bug,
+  Lock,
+  ExternalLink,
+  AlertTriangle,
+  CheckCircle2,
+  XCircle,
+  FileText,
 } from "lucide-react";
 
 interface ReportDetailsProps {
@@ -23,7 +31,7 @@ interface ReportDetailsProps {
 }
 
 export function ReportDetails({ result }: ReportDetailsProps) {
-  const [activeTab, setActiveTab] = useState<"overview" | "categories" | "signatures" | "abuse" | "raw">("overview");
+  const [activeTab, setActiveTab] = useState<string>("overview");
   const [jsonCopied, setJsonCopied] = useState(false);
 
   const copyJson = () => {
@@ -47,6 +55,48 @@ export function ReportDetails({ result }: ReportDetailsProps) {
           <Shield className="w-3.5 h-3.5" />
           <span>Intelligence Overview</span>
         </button>
+
+        {result.scanType === "email" && (
+          <button
+            onClick={() => setActiveTab("email_details")}
+            className={`px-4 py-3 border-b-2 flex items-center gap-2 whitespace-nowrap transition-colors ${
+              activeTab === "email_details"
+                ? "border-soc-accent text-soc-accent font-semibold bg-soc-dark/40"
+                : "border-transparent text-gray-400 hover:text-gray-200"
+            }`}
+          >
+            <Mail className="w-3.5 h-3.5" />
+            <span>Phishing & Breach Indicators</span>
+          </button>
+        )}
+
+        {result.scanType === "domain" && (
+          <button
+            onClick={() => setActiveTab("domain_details")}
+            className={`px-4 py-3 border-b-2 flex items-center gap-2 whitespace-nowrap transition-colors ${
+              activeTab === "domain_details"
+                ? "border-soc-accent text-soc-accent font-semibold bg-soc-dark/40"
+                : "border-transparent text-gray-400 hover:text-gray-200"
+            }`}
+          >
+            <Globe className="w-3.5 h-3.5" />
+            <span>DNS & SSL Security</span>
+          </button>
+        )}
+
+        {result.scanType === "cve" && (
+          <button
+            onClick={() => setActiveTab("cve_details")}
+            className={`px-4 py-3 border-b-2 flex items-center gap-2 whitespace-nowrap transition-colors ${
+              activeTab === "cve_details"
+                ? "border-soc-accent text-soc-accent font-semibold bg-soc-dark/40"
+                : "border-transparent text-gray-400 hover:text-gray-200"
+            }`}
+          >
+            <Bug className="w-3.5 h-3.5" />
+            <span>Exploit & Remediation</span>
+          </button>
+        )}
 
         {result.scanType === "url" && result.categories && Object.keys(result.categories).length > 0 && (
           <button
@@ -128,6 +178,108 @@ export function ReportDetails({ result }: ReportDetailsProps) {
               </div>
             </div>
 
+            {/* Email Overview */}
+            {result.scanType === "email" && (
+              <>
+                <div className="p-4 rounded-lg bg-soc-darker/60 border border-soc-border/60">
+                  <div className="text-xs text-gray-400 font-mono flex items-center gap-1.5 mb-1">
+                    <Mail className="w-3.5 h-3.5 text-purple-400" />
+                    Domain / Provider
+                  </div>
+                  <div className="font-mono text-xs md:text-sm text-white font-medium">
+                    {result.domain}
+                  </div>
+                </div>
+
+                <div className="p-4 rounded-lg bg-soc-darker/60 border border-soc-border/60">
+                  <div className="text-xs text-gray-400 font-mono flex items-center gap-1.5 mb-1">
+                    <Shield className="w-3.5 h-3.5 text-emerald-400" />
+                    Mail Server (MX)
+                  </div>
+                  <div className="font-mono text-xs md:text-sm text-gray-200">
+                    {result.hasMxRecords ? "Valid MX Configured" : "No MX Records (Undeliverable)"}
+                  </div>
+                </div>
+
+                {result.typosquattingTarget && (
+                  <div className="p-4 rounded-lg bg-soc-darker/60 border border-red-500/30 md:col-span-2">
+                    <div className="text-xs text-red-400 font-mono flex items-center gap-1.5 mb-1">
+                      <AlertTriangle className="w-3.5 h-3.5 text-red-400" />
+                      Homoglyph / Typosquatting Target
+                    </div>
+                    <div className="font-mono text-xs md:text-sm text-white font-bold">
+                      Impersonating: {result.typosquattingTarget}
+                    </div>
+                  </div>
+                )}
+              </>
+            )}
+
+            {/* Domain Overview */}
+            {result.scanType === "domain" && (
+              <>
+                <div className="p-4 rounded-lg bg-soc-darker/60 border border-soc-border/60">
+                  <div className="text-xs text-gray-400 font-mono flex items-center gap-1.5 mb-1">
+                    <Server className="w-3.5 h-3.5 text-cyan-400" />
+                    Registrar Authority
+                  </div>
+                  <div className="font-mono text-xs md:text-sm text-white font-medium truncate">
+                    {result.registrar || "Public Registrar"}
+                  </div>
+                </div>
+
+                <div className="p-4 rounded-lg bg-soc-darker/60 border border-soc-border/60">
+                  <div className="text-xs text-gray-400 font-mono flex items-center gap-1.5 mb-1">
+                    <Lock className="w-3.5 h-3.5 text-emerald-400" />
+                    SSL/TLS Certificate
+                  </div>
+                  <div className="font-mono text-xs md:text-sm text-emerald-400 font-medium">
+                    {result.sslCertificate?.valid ? `Valid (${result.sslCertificate.daysRemaining}d left)` : "Invalid / Expired"}
+                  </div>
+                </div>
+              </>
+            )}
+
+            {/* CVE Overview */}
+            {result.scanType === "cve" && (
+              <>
+                <div className="p-4 rounded-lg bg-soc-darker/60 border border-soc-border/60">
+                  <div className="text-xs text-gray-400 font-mono flex items-center gap-1.5 mb-1">
+                    <Bug className="w-3.5 h-3.5 text-red-400" />
+                    CVSS Severity Rating
+                  </div>
+                  <div className="font-mono text-sm text-red-400 font-bold">
+                    {result.cvssScore} / 10.0 ({result.severity})
+                  </div>
+                </div>
+
+                <div className="p-4 rounded-lg bg-soc-darker/60 border border-soc-border/60">
+                  <div className="text-xs text-gray-400 font-mono flex items-center gap-1.5 mb-1">
+                    <AlertTriangle className="w-3.5 h-3.5 text-amber-400" />
+                    CISA KEV Status
+                  </div>
+                  <div className="font-mono text-xs md:text-sm text-white font-medium">
+                    {result.isCisaKevKnownExploit ? (
+                      <span className="text-red-400 font-bold">Known Weaponized Exploit</span>
+                    ) : (
+                      <span className="text-emerald-400">No Automated Exploits</span>
+                    )}
+                  </div>
+                </div>
+
+                <div className="p-4 rounded-lg bg-soc-darker/60 border border-soc-border/60 md:col-span-3">
+                  <div className="text-xs text-gray-400 font-mono flex items-center gap-1.5 mb-1">
+                    <FileText className="w-3.5 h-3.5 text-soc-accent" />
+                    Vulnerability Description
+                  </div>
+                  <p className="font-mono text-xs text-gray-200 leading-relaxed mt-1">
+                    {result.description}
+                  </p>
+                </div>
+              </>
+            )}
+
+            {/* URL Overview */}
             {result.scanType === "url" && (
               <>
                 <div className="p-4 rounded-lg bg-soc-darker/60 border border-soc-border/60">
@@ -158,6 +310,7 @@ export function ReportDetails({ result }: ReportDetailsProps) {
               </>
             )}
 
+            {/* IP Overview */}
             {result.scanType === "ip" && (
               <>
                 <div className="p-4 rounded-lg bg-soc-darker/60 border border-soc-border/60">
@@ -189,19 +342,10 @@ export function ReportDetails({ result }: ReportDetailsProps) {
                     {result.usageType || "Commercial"}
                   </div>
                 </div>
-
-                <div className="p-4 rounded-lg bg-soc-darker/60 border border-soc-border/60">
-                  <div className="text-xs text-gray-400 font-mono flex items-center gap-1.5 mb-1">
-                    <User className="w-3.5 h-3.5 text-purple-400" />
-                    Distinct Reporters
-                  </div>
-                  <div className="font-mono text-sm text-gray-200">
-                    {result.numDistinctUsers} unique security analysts
-                  </div>
-                </div>
               </>
             )}
 
+            {/* Hash & File Overview */}
             {(result.scanType === "hash" || result.scanType === "file") && (
               <>
                 <div className="p-4 rounded-lg bg-soc-darker/60 border border-soc-border/60">
@@ -237,6 +381,185 @@ export function ReportDetails({ result }: ReportDetailsProps) {
                 )}
               </>
             )}
+          </div>
+        )}
+
+        {/* Email Phishing & Breach Details Tab */}
+        {activeTab === "email_details" && result.scanType === "email" && (
+          <div className="space-y-4">
+            {/* Phishing Indicators */}
+            <div className="p-4 rounded-lg bg-soc-darker/70 border border-soc-border/60 space-y-2">
+              <h4 className="text-xs font-mono font-bold text-white flex items-center gap-1.5">
+                <AlertTriangle className="w-4 h-4 text-amber-400" />
+                <span>Heuristic Phishing & Social Engineering Flags ({result.phishingIndicators.length})</span>
+              </h4>
+              {result.phishingIndicators.length > 0 ? (
+                <ul className="space-y-1.5 text-xs font-mono text-gray-300">
+                  {result.phishingIndicators.map((ind, idx) => (
+                    <li key={idx} className="flex items-start gap-2 bg-soc-dark/60 p-2 rounded border border-soc-border/40">
+                      <span className="text-red-400 font-bold">•</span>
+                      <span>{ind}</span>
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <div className="text-xs font-mono text-emerald-400 flex items-center gap-1.5">
+                  <CheckCircle2 className="w-3.5 h-3.5" />
+                  <span>No deceptive phishing patterns or high-urgency wording detected.</span>
+                </div>
+              )}
+            </div>
+
+            {/* Extracted Links */}
+            {result.extractedLinks && result.extractedLinks.length > 0 && (
+              <div className="p-4 rounded-lg bg-soc-darker/70 border border-soc-border/60 space-y-2">
+                <h4 className="text-xs font-mono font-bold text-white flex items-center gap-1.5">
+                  <Globe className="w-4 h-4 text-blue-400" />
+                  <span>Extracted Embedded URLs ({result.extractedLinks.length})</span>
+                </h4>
+                <div className="space-y-1.5 text-xs font-mono">
+                  {result.extractedLinks.map((link, idx) => (
+                    <div key={idx} className="flex items-center justify-between gap-2 bg-soc-dark/60 p-2.5 rounded border border-soc-border/40">
+                      <span className="text-gray-200 truncate">{link.url}</span>
+                      <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${link.isSuspicious ? "bg-red-500/20 text-red-400 border border-red-500/30" : "bg-emerald-500/20 text-emerald-400 border border-emerald-500/30"}`}>
+                        {link.isSuspicious ? "Suspicious Link" : "Clean"}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Data Breach Telemetry */}
+            <div className="p-4 rounded-lg bg-soc-darker/70 border border-soc-border/60 space-y-2">
+              <h4 className="text-xs font-mono font-bold text-white flex items-center gap-1.5">
+                <Shield className="w-4 h-4 text-purple-400" />
+                <span>Known Data Breach Exposures ({result.breachCount})</span>
+              </h4>
+              {result.breachesExposed.length > 0 ? (
+                <div className="flex flex-wrap gap-2">
+                  {result.breachesExposed.map((b, idx) => (
+                    <span key={idx} className="px-2.5 py-1 rounded bg-soc-dark border border-soc-border text-xs font-mono text-amber-300">
+                      {b}
+                    </span>
+                  ))}
+                </div>
+              ) : (
+                <div className="text-xs font-mono text-emerald-400 flex items-center gap-1.5">
+                  <CheckCircle2 className="w-3.5 h-3.5" />
+                  <span>No public credential breach exposures found for this account.</span>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+
+        {/* Domain DNS & SSL Details Tab */}
+        {activeTab === "domain_details" && result.scanType === "domain" && (
+          <div className="space-y-4">
+            {/* DNS Records */}
+            <div className="p-4 rounded-lg bg-soc-darker/70 border border-soc-border/60 space-y-2">
+              <h4 className="text-xs font-mono font-bold text-white flex items-center gap-1.5">
+                <Server className="w-4 h-4 text-cyan-400" />
+                <span>Authoritative DNS Records ({result.dnsRecords.length})</span>
+              </h4>
+              <div className="space-y-1.5 font-mono text-xs">
+                {result.dnsRecords.map((r, idx) => (
+                  <div key={idx} className="flex items-center justify-between gap-2 bg-soc-dark/60 p-2.5 rounded border border-soc-border/40">
+                    <span className="text-soc-accent font-bold w-12">{r.type}</span>
+                    <span className="text-gray-200 truncate flex-1">{r.value}</span>
+                    {r.ttl && <span className="text-gray-500 text-[10px]">TTL {r.ttl}s</span>}
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* SSL Certificate Details */}
+            {result.sslCertificate && (
+              <div className="p-4 rounded-lg bg-soc-darker/70 border border-soc-border/60 space-y-2">
+                <h4 className="text-xs font-mono font-bold text-white flex items-center gap-1.5">
+                  <Lock className="w-4 h-4 text-emerald-400" />
+                  <span>SSL/TLS Encryption Certificate</span>
+                </h4>
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 text-xs font-mono">
+                  <div className="bg-soc-dark p-2.5 rounded border border-soc-border">
+                    <div className="text-gray-400 text-[10px]">Certificate Authority</div>
+                    <div className="text-white font-medium truncate mt-0.5">{result.sslCertificate.issuer}</div>
+                  </div>
+                  <div className="bg-soc-dark p-2.5 rounded border border-soc-border">
+                    <div className="text-gray-400 text-[10px]">Validity Remaining</div>
+                    <div className="text-emerald-400 font-medium mt-0.5">{result.sslCertificate.daysRemaining} Days</div>
+                  </div>
+                  <div className="bg-soc-dark p-2.5 rounded border border-soc-border">
+                    <div className="text-gray-400 text-[10px]">Self-Signed Status</div>
+                    <div className="text-white font-medium mt-0.5">{result.sslCertificate.isSelfSigned ? "Yes (Untrusted)" : "No (Trusted CA)"}</div>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* CVE Exploit & Remediation Tab */}
+        {activeTab === "cve_details" && result.scanType === "cve" && (
+          <div className="space-y-4">
+            {/* Vector String & EPSS */}
+            <div className="p-4 rounded-lg bg-soc-darker/70 border border-soc-border/60 space-y-2">
+              <h4 className="text-xs font-mono font-bold text-white flex items-center gap-1.5">
+                <Bug className="w-4 h-4 text-red-400" />
+                <span>CVSS Vector String & Weakness</span>
+              </h4>
+              <div className="font-mono text-xs text-soc-accent bg-soc-dark p-2.5 rounded border border-soc-border">
+                {result.vectorString}
+              </div>
+              <div className="text-xs font-mono text-gray-300">
+                <span className="text-gray-400">Weakness:</span> {result.cwe} ({result.cweName})
+              </div>
+            </div>
+
+            {/* Affected Products */}
+            <div className="p-4 rounded-lg bg-soc-darker/70 border border-soc-border/60 space-y-2">
+              <h4 className="text-xs font-mono font-bold text-white flex items-center gap-1.5">
+                <Layers className="w-4 h-4 text-amber-400" />
+                <span>Known Affected Products</span>
+              </h4>
+              <div className="flex flex-wrap gap-1.5 font-mono text-xs">
+                {result.affectedProducts.map((prod, idx) => (
+                  <span key={idx} className="px-2.5 py-1 rounded bg-soc-dark border border-soc-border text-gray-200">
+                    {prod}
+                  </span>
+                ))}
+              </div>
+            </div>
+
+            {/* Remediation & References */}
+            <div className="p-4 rounded-lg bg-soc-darker/70 border border-soc-border/60 space-y-2">
+              <h4 className="text-xs font-mono font-bold text-white flex items-center gap-1.5">
+                <Shield className="w-4 h-4 text-emerald-400" />
+                <span>Remediation & Patching Advisory</span>
+              </h4>
+              <p className="text-xs font-mono text-gray-200 bg-soc-dark p-3 rounded border border-soc-border leading-relaxed">
+                {result.remediation}
+              </p>
+
+              <div className="pt-1">
+                <div className="text-xs font-mono text-gray-400 mb-1">Authoritative References:</div>
+                <div className="space-y-1 text-xs font-mono">
+                  {result.references.map((ref, idx) => (
+                    <a
+                      key={idx}
+                      href={ref}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center gap-1 text-soc-accent hover:underline truncate"
+                    >
+                      <ExternalLink className="w-3 h-3 flex-shrink-0" />
+                      <span className="truncate">{ref}</span>
+                    </a>
+                  ))}
+                </div>
+              </div>
+            </div>
           </div>
         )}
 

@@ -165,31 +165,68 @@ export function VerdictBanner({ result }: VerdictBannerProps) {
             </div>
           </div>
 
-          {/* Quick stats pills */}
-          {result.scanType !== "ip" ? (
-            <div className="grid grid-cols-3 gap-2 text-center">
+          {/* Quick stats pills tailored to scan type */}
+          {result.scanType === "cve" ? (
+            <div className="grid grid-cols-2 gap-2 text-center">
               <div className="bg-soc-dark/80 border border-red-500/20 px-3 py-2 rounded-lg">
-                <div className="text-xs text-gray-400">Malicious</div>
-                <div className="text-lg font-bold font-mono text-red-400">{result.stats?.malicious ?? 0}</div>
+                <div className="text-[11px] text-gray-400">CVSS v3.1</div>
+                <div className="text-lg font-bold font-mono text-red-400">
+                  {"cvssScore" in result ? result.cvssScore : 0} <span className="text-[10px] uppercase font-normal">{"severity" in result ? result.severity : ""}</span>
+                </div>
               </div>
               <div className="bg-soc-dark/80 border border-amber-500/20 px-3 py-2 rounded-lg">
-                <div className="text-xs text-gray-400">Suspicious</div>
-                <div className="text-lg font-bold font-mono text-amber-400">{result.stats?.suspicious ?? 0}</div>
-              </div>
-              <div className="bg-soc-dark/80 border border-emerald-500/20 px-3 py-2 rounded-lg">
-                <div className="text-xs text-gray-400">Clean</div>
-                <div className="text-lg font-bold font-mono text-emerald-400">{result.stats?.harmless ?? 0}</div>
+                <div className="text-[11px] text-gray-400">EPSS Exploit Prob.</div>
+                <div className="text-lg font-bold font-mono text-amber-400">
+                  {"epssScore" in result ? `${(result.epssScore * 100).toFixed(1)}%` : "0%"}
+                </div>
               </div>
             </div>
-          ) : (
+          ) : result.scanType === "email" ? (
+            <div className="grid grid-cols-2 gap-2 text-center">
+              <div className="bg-soc-dark/80 border border-soc-border px-3 py-2 rounded-lg">
+                <div className="text-[11px] text-gray-400">Breaches Exposed</div>
+                <div className="text-lg font-bold font-mono text-amber-400">{"breachCount" in result ? result.breachCount : 0}</div>
+              </div>
+              <div className="bg-soc-dark/80 border border-soc-border px-3 py-2 rounded-lg">
+                <div className="text-[11px] text-gray-400">Disposable Box</div>
+                <div className="text-lg font-bold font-mono text-gray-200">{"isDisposable" in result && result.isDisposable ? "YES" : "NO"}</div>
+              </div>
+            </div>
+          ) : result.scanType === "domain" ? (
+            <div className="grid grid-cols-2 gap-2 text-center">
+              <div className="bg-soc-dark/80 border border-soc-border px-3 py-2 rounded-lg">
+                <div className="text-[11px] text-gray-400">Domain Age</div>
+                <div className="text-lg font-bold font-mono text-emerald-400">{"domainAgeDays" in result && result.domainAgeDays ? `${result.domainAgeDays}d` : "Established"}</div>
+              </div>
+              <div className="bg-soc-dark/80 border border-soc-border px-3 py-2 rounded-lg">
+                <div className="text-[11px] text-gray-400">DGA Entropy</div>
+                <div className="text-lg font-bold font-mono text-amber-400">{"dgaEntropyScore" in result ? `${result.dgaEntropyScore}%` : "0%"}</div>
+              </div>
+            </div>
+          ) : result.scanType === "ip" ? (
             <div className="grid grid-cols-2 gap-2 text-center">
               <div className="bg-soc-dark/80 border border-soc-border px-3 py-2 rounded-lg">
                 <div className="text-xs text-gray-400">Abuse Score</div>
-                <div className="text-lg font-bold font-mono text-amber-400">{result.abuseConfidenceScore}%</div>
+                <div className="text-lg font-bold font-mono text-amber-400">{"abuseConfidenceScore" in result ? result.abuseConfidenceScore : 0}%</div>
               </div>
               <div className="bg-soc-dark/80 border border-soc-border px-3 py-2 rounded-lg">
                 <div className="text-xs text-gray-400">Total Reports</div>
-                <div className="text-lg font-bold font-mono text-gray-200">{result.totalReports}</div>
+                <div className="text-lg font-bold font-mono text-gray-200">{"totalReports" in result ? result.totalReports : 0}</div>
+              </div>
+            </div>
+          ) : (
+            <div className="grid grid-cols-3 gap-2 text-center">
+              <div className="bg-soc-dark/80 border border-red-500/20 px-3 py-2 rounded-lg">
+                <div className="text-xs text-gray-400">Malicious</div>
+                <div className="text-lg font-bold font-mono text-red-400">{"stats" in result ? result.stats?.malicious ?? 0 : 0}</div>
+              </div>
+              <div className="bg-soc-dark/80 border border-amber-500/20 px-3 py-2 rounded-lg">
+                <div className="text-xs text-gray-400">Suspicious</div>
+                <div className="text-lg font-bold font-mono text-amber-400">{"stats" in result ? result.stats?.suspicious ?? 0 : 0}</div>
+              </div>
+              <div className="bg-soc-dark/80 border border-emerald-500/20 px-3 py-2 rounded-lg">
+                <div className="text-xs text-gray-400">Clean</div>
+                <div className="text-lg font-bold font-mono text-emerald-400">{"stats" in result ? result.stats?.harmless ?? 0 : 0}</div>
               </div>
             </div>
           )}

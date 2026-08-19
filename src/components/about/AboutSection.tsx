@@ -14,6 +14,9 @@ import {
   User,
   Code2,
   Terminal,
+  Mail,
+  Bug,
+  Server,
 } from "lucide-react";
 
 export function AboutSection() {
@@ -23,7 +26,7 @@ export function AboutSection() {
       title: "1. URL Threat Scanner",
       badge: "VirusTotal + Google Safe Browsing",
       description:
-        "Enter any suspicious website link, shortened URL, or domain. The scanner analyzes 70+ antivirus engines and Google Safe Browsing to detect phishing, credential harvesters, malware distribution, and IP grabbers like iplogger or grabify.",
+        "Enter any website link, shortened URL, or domain. Analyzes 70+ antivirus engines and Google Safe Browsing to detect phishing, credential harvesters, malware distribution, and IP grabbers (iplogger, grabify).",
       tips: "Includes automated HTTP 301/302 redirect tracking to reveal hidden destination endpoints.",
     },
     {
@@ -31,7 +34,7 @@ export function AboutSection() {
       title: "2. IP Reputation & Threat Lookup",
       badge: "AbuseIPDB + VirusTotal",
       description:
-        "Submit any IPv4 or IPv6 address. The scanner checks the Abuse Confidence Score (0-100%), ISP organization, country of origin, usage type (VPN / Tor / Datacenter), and recent community security incident reports.",
+        "Submit any IPv4 or IPv6 address. Fetches Abuse Confidence Score (0-100%), ISP organization, country of origin, usage type (VPN / Tor / Datacenter), and recent community security incident reports.",
       tips: "Ideal for investigating suspicious server connections, SSH brute-force attackers, and botnet scanning nodes.",
     },
     {
@@ -39,15 +42,15 @@ export function AboutSection() {
       title: "3. Cryptographic Hash Lookup",
       badge: "MD5 • SHA-1 • SHA-256",
       description:
-        "Input any 32-char MD5, 40-char SHA-1, or 64-char SHA-256 hash. The platform identifies known malware families (such as WannaCry, Emotet, RedLine Stealer, Mirai), file metadata, and AV detection ratios without needing the raw file.",
-      tips: "Instantly checks if a binary has already been flagged by global threat databases.",
+        "Input any 32-char MD5, 40-char SHA-1, or 64-char SHA-256 hash. Identifies known malware families (WannaCry, Emotet, RedLine Stealer, Mirai), file metadata, and AV detection ratios without needing the raw file.",
+      tips: "Instantly checks if a binary has already been flagged in global threat databases.",
     },
     {
       icon: <UploadCloud className="w-5 h-5 text-amber-400" />,
       title: "4. File Upload & Binary Scanner",
       badge: "Web Crypto SHA-256 + VirusTotal Multi-Engine",
       description:
-        "Drag and drop any suspicious file (executables, PDFs, documents, archives, APKs up to 32MB). The app computes the cryptographic SHA-256 digest inside your browser in milliseconds, checks if it's already cataloged, and uploads it for deep multi-engine analysis if unknown.",
+        "Drag and drop any suspicious file (executables, PDFs, documents, archives, APKs up to 32MB). Computes SHA-256 in your browser in milliseconds, checks hash databases, and uploads for deep multi-engine analysis if unknown.",
       tips: "Features built-in double-extension detection (e.g. invoice.pdf.exe) and macro/script exploit warnings.",
     },
     {
@@ -57,6 +60,30 @@ export function AboutSection() {
       description:
         "Upload a QR code image/screenshot or turn on your live camera. The embedded URL is decoded directly in your browser without sending raw camera feeds to the server, and automatically piped into the URL threat scanner.",
       tips: "Protects against Quishing (QR Phishing) and malicious tracking redirects.",
+    },
+    {
+      icon: <Mail className="w-5 h-5 text-indigo-400" />,
+      title: "6. Email & Phishing Scanner",
+      badge: "Disposable Detection • Typo-squatting • Phishing NLP",
+      description:
+        "Look up an email address or paste raw email headers and body text. Detects 500+ disposable temporary mail providers, brand typo-squatting (e.g. paypa1.com), data breach exposures, SPF/DMARC spoofing, and extracts embedded phishing links.",
+      tips: "Automatically detects high-urgency panic language and financial extortion patterns.",
+    },
+    {
+      icon: <Server className="w-5 h-5 text-cyan-400" />,
+      title: "7. Domain & WHOIS / DNS Security",
+      badge: "DNS-over-HTTPS • SSL Health • DGA Entropy",
+      description:
+        "Inspect any domain name. Resolves authoritative DNS records (A, MX, NS, TXT), flags Newly Registered Domains (< 30 days) used in active campaigns, audits SSL/TLS certificate validity, and measures DGA algorithmic entropy.",
+      tips: "Checks SPF, DMARC, and DKIM email authentication compliance.",
+    },
+    {
+      icon: <Bug className="w-5 h-5 text-red-400" />,
+      title: "8. CVE Vulnerability & Exploit Intelligence",
+      badge: "NVD v2.0 • FIRST EPSS • CISA KEV Catalog",
+      description:
+        "Query Common Vulnerabilities and Exposures (e.g. CVE-2021-44228 Log4Shell). Retrieves CVSS v3.1 base score, attack vectors, real-world Exploit Prediction (EPSS) probabilities, CISA Known Exploited Vulnerability alerts, and mitigation advisories.",
+      tips: "Essential for vulnerability management, prioritizing zero-days and active weaponized exploits.",
     },
   ];
 
@@ -69,13 +96,13 @@ export function AboutSection() {
             <Shield className="w-5 h-5" />
           </div>
           <div>
-            <h2 className="text-lg font-bold text-white">About ThreatVigil Threat Intelligence Scanner</h2>
-            <p className="text-xs text-gray-400 font-mono">Real-time multi-source cybersecurity scanning platform</p>
+            <h2 className="text-lg font-bold text-white">About ThreatVigil Threat Intelligence Platform</h2>
+            <p className="text-xs text-gray-400 font-mono">Real-time 8-in-1 cyber threat intelligence and vulnerability scanning suite</p>
           </div>
         </div>
 
         <p className="text-xs sm:text-sm text-gray-300 leading-relaxed">
-          ThreatVigil is a unified cyber threat intelligence platform designed to help security analysts, developers, and everyday users detect phishing, malware, ransomware, abusive network nodes, and stealth tracking links in real time.
+          ThreatVigil is a unified cyber threat intelligence platform designed to help security analysts, developers, and everyday users detect phishing, malware, ransomware, abusive network nodes, credential leaks, and weaponized CVE exploits in real time.
         </p>
 
         {/* Feature Highlights Grid */}
@@ -86,7 +113,7 @@ export function AboutSection() {
               <span>Multi-Source Engine</span>
             </div>
             <p className="text-[11px] text-gray-400">
-              Aggregates feeds from 70+ antivirus engines (Kaspersky, Sophos, BitDefender, Microsoft) with Google Safe Browsing and AbuseIPDB.
+              Aggregates telemetry from 70+ antivirus vendors with Google Safe Browsing, AbuseIPDB, NVD, and EPSS.
             </p>
           </div>
 
@@ -96,7 +123,7 @@ export function AboutSection() {
               <span>Client-Side Privacy</span>
             </div>
             <p className="text-[11px] text-gray-400">
-              SHA-256 calculation and QR image decoding are processed directly inside your browser via Web Crypto API and jsQR.
+              SHA-256 hashing and QR decoding are executed in-browser using Web Crypto API and jsQR before network transmission.
             </p>
           </div>
 
@@ -106,7 +133,7 @@ export function AboutSection() {
               <span>Zero-Setup Demo Mode</span>
             </div>
             <p className="text-[11px] text-gray-400">
-              Works immediately out-of-the-box with built-in test signatures, or with your own free API keys.
+              Works instantly with built-in cybersecurity test signatures, or with your own free API keys.
             </p>
           </div>
         </div>
@@ -116,10 +143,10 @@ export function AboutSection() {
       <div className="space-y-4">
         <div className="flex items-center justify-between border-b border-soc-border/60 pb-2">
           <h3 className="text-base font-bold text-white flex items-center gap-2">
-            <span>How to Use the Scanners</span>
+            <span>How to Use the 8 Scanners</span>
           </h3>
           <span className="text-xs font-mono text-soc-accent px-2 py-0.5 rounded bg-soc-accent/10 border border-soc-accent/30">
-            5 Modules
+            8 Modules
           </span>
         </div>
 

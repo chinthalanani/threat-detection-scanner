@@ -46,3 +46,29 @@ export function detectHashType(input: string): 'md5' | 'sha1' | 'sha256' | null 
 
   return null;
 }
+
+export function isValidEmail(input: string): boolean {
+  if (!input || typeof input !== 'string') return false;
+  const emailRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)+$/;
+  return emailRegex.test(input.trim());
+}
+
+export function isValidDomain(input: string): boolean {
+  if (!input || typeof input !== 'string') return false;
+  const cleaned = input.trim().toLowerCase().replace(/^https?:\/\//, '').replace(/\/.*$/, '');
+  const domainRegex = /^(?:[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?\.)+[a-zA-Z]{2,}$/;
+  return domainRegex.test(cleaned);
+}
+
+export function isValidCve(input: string): boolean {
+  if (!input || typeof input !== 'string') return false;
+  const cveRegex = /^CVE-\d{4}-\d{4,7}$/i;
+  return cveRegex.test(input.trim());
+}
+
+export function extractUrlsFromText(text: string): string[] {
+  if (!text) return [];
+  const urlRegex = /(https?:\/\/[^\s<>"'{}|\\^`]+)/gi;
+  const matches = text.match(urlRegex) || [];
+  return Array.from(new Set(matches));
+}

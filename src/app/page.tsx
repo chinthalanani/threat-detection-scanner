@@ -15,6 +15,9 @@ import {
   Sparkles,
   Search,
   Info,
+  Mail,
+  Bug,
+  Server,
 } from "lucide-react";
 import { Header } from "@/components/Header";
 import { UrlScanner } from "@/components/scanners/UrlScanner";
@@ -22,6 +25,9 @@ import { IpScanner } from "@/components/scanners/IpScanner";
 import { HashScanner } from "@/components/scanners/HashScanner";
 import { FileScanner } from "@/components/scanners/FileScanner";
 import { QrScanner } from "@/components/scanners/QrScanner";
+import { EmailScanner } from "@/components/scanners/EmailScanner";
+import { DomainScanner } from "@/components/scanners/DomainScanner";
+import { CveScanner } from "@/components/scanners/CveScanner";
 import { AboutSection } from "@/components/about/AboutSection";
 import { VerdictBanner } from "@/components/results/VerdictBanner";
 import { VendorMatrix } from "@/components/results/VendorMatrix";
@@ -33,41 +39,50 @@ import { ScanResult, ScanType } from "@/types/threat";
 export default function ThreatDashboard() {
   const [activeTab, setActiveTab] = useState<ScanType>("url");
   const [currentResult, setCurrentResult] = useState<ScanResult | null>(null);
-  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [isHistoryOpen, setIsHistoryOpen] = useState(false);
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [historyKey, setHistoryKey] = useState(0);
 
   const handleScanComplete = (result: ScanResult) => {
     setCurrentResult(result);
     setHistoryKey((prev) => prev + 1);
 
-    // If completely clean verdict, trigger confetti
-    if (result.verdict === "clean" && result.threatScore === 0) {
-      try {
-        confetti({
-          particleCount: 40,
-          spread: 60,
-          origin: { y: 0.8 },
-          colors: ["#10b981", "#00e599", "#3b82f6"],
-        });
-      } catch {
-        // ignore
-      }
+    // Trigger celebration confetti if result is completely clean
+    if (result.verdict === "clean") {
+      confetti({
+        particleCount: 50,
+        spread: 60,
+        origin: { y: 0.8 },
+        colors: ["#10b981", "#34d399", "#059669"],
+      });
     }
   };
 
   const handleSelectFromHistory = (result: ScanResult) => {
-    setCurrentResult(result);
     setActiveTab(result.scanType);
+    setCurrentResult(result);
+    setIsHistoryOpen(false);
   };
 
-  const handleResetScan = () => {
+  const handleNewScan = () => {
     setCurrentResult(null);
   };
 
+  const tabs: { id: ScanType; label: string; icon: React.ReactNode }[] = [
+    { id: "url", label: "URL Scanner", icon: <Globe className="w-3.5 h-3.5" /> },
+    { id: "ip", label: "IP Reputation", icon: <Network className="w-3.5 h-3.5" /> },
+    { id: "hash", label: "Hash Lookup", icon: <Hash className="w-3.5 h-3.5" /> },
+    { id: "file", label: "File Scanner", icon: <UploadCloud className="w-3.5 h-3.5" /> },
+    { id: "qr", label: "QR Scanner", icon: <QrCode className="w-3.5 h-3.5" /> },
+    { id: "email", label: "Email / Phish", icon: <Mail className="w-3.5 h-3.5" /> },
+    { id: "domain", label: "Domain & DNS", icon: <Server className="w-3.5 h-3.5" /> },
+    { id: "cve", label: "CVE Exploit", icon: <Bug className="w-3.5 h-3.5" /> },
+    { id: "about", label: "About & Guide", icon: <Info className="w-3.5 h-3.5" /> },
+  ];
+
   return (
-    <div className="min-h-screen flex flex-col bg-soc-darkest text-gray-100 font-sans selection:bg-soc-accent selection:text-soc-darkest">
-      {/* Header */}
+    <div className="min-h-screen bg-soc-darkest text-gray-100 flex flex-col font-sans selection:bg-soc-accent selection:text-soc-darkest">
+      {/* Top SOC Navbar */}
       <Header
         onOpenSettings={() => setIsSettingsOpen(true)}
         onOpenHistory={() => setIsHistoryOpen(true)}
@@ -75,12 +90,12 @@ export default function ThreatDashboard() {
       />
 
       {/* Main Container */}
-      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <main className="flex-1 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full">
         {/* Hero Section */}
         <div className="text-center max-w-3xl mx-auto mb-8 space-y-3">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-soc-dark border border-soc-border text-xs font-mono text-soc-accent">
             <Zap className="w-3.5 h-3.5" />
-            <span>Real-Time Multi-Source Threat Intelligence</span>
+            <span>Real-Time Multi-Source Threat Intelligence Suite</span>
           </div>
 
           <h1 className="text-3xl sm:text-4xl md:text-5xl font-black tracking-tight text-white">
@@ -88,102 +103,30 @@ export default function ThreatDashboard() {
           </h1>
 
           <p className="text-sm md:text-base text-gray-400 max-w-2xl mx-auto">
-            Scan suspicious URLs, IP addresses, cryptographic file hashes, binary uploads, and QR codes across 70+ security vendors including VirusTotal, AbuseIPDB, and Google Safe Browsing.
+            Scan suspicious URLs, IP addresses, hashes, files, QR codes, phishing emails, domains, and CVE vulnerabilities across 70+ security vendors.
           </p>
         </div>
 
         {/* Tab Navigation */}
         <div className="flex items-center justify-start sm:justify-center overflow-x-auto pb-3 mb-6">
-          <div className="inline-flex p-1.5 rounded-xl bg-soc-darker border border-soc-border text-xs sm:text-sm font-mono">
-            <button
-              onClick={() => {
-                setActiveTab("url");
-                setCurrentResult(null);
-              }}
-              className={`flex items-center gap-2 px-4 py-2.5 rounded-lg transition-all ${
-                activeTab === "url"
-                  ? "bg-soc-accent text-soc-darkest font-bold shadow-lg shadow-soc-accent/20"
-                  : "text-gray-400 hover:text-white"
-              }`}
-            >
-              <Globe className="w-4 h-4" />
-              <span>URL Scanner</span>
-            </button>
-
-            <button
-              onClick={() => {
-                setActiveTab("ip");
-                setCurrentResult(null);
-              }}
-              className={`flex items-center gap-2 px-4 py-2.5 rounded-lg transition-all ${
-                activeTab === "ip"
-                  ? "bg-soc-accent text-soc-darkest font-bold shadow-lg shadow-soc-accent/20"
-                  : "text-gray-400 hover:text-white"
-              }`}
-            >
-              <Network className="w-4 h-4" />
-              <span>IP Reputation</span>
-            </button>
-
-            <button
-              onClick={() => {
-                setActiveTab("hash");
-                setCurrentResult(null);
-              }}
-              className={`flex items-center gap-2 px-4 py-2.5 rounded-lg transition-all ${
-                activeTab === "hash"
-                  ? "bg-soc-accent text-soc-darkest font-bold shadow-lg shadow-soc-accent/20"
-                  : "text-gray-400 hover:text-white"
-              }`}
-            >
-              <Hash className="w-4 h-4" />
-              <span>Hash Lookup</span>
-            </button>
-
-            <button
-              onClick={() => {
-                setActiveTab("file");
-                setCurrentResult(null);
-              }}
-              className={`flex items-center gap-2 px-4 py-2.5 rounded-lg transition-all ${
-                activeTab === "file"
-                  ? "bg-soc-accent text-soc-darkest font-bold shadow-lg shadow-soc-accent/20"
-                  : "text-gray-400 hover:text-white"
-              }`}
-            >
-              <UploadCloud className="w-4 h-4" />
-              <span>File Scanner</span>
-            </button>
-
-            <button
-              onClick={() => {
-                setActiveTab("qr");
-                setCurrentResult(null);
-              }}
-              className={`flex items-center gap-2 px-4 py-2.5 rounded-lg transition-all ${
-                activeTab === "qr"
-                  ? "bg-soc-accent text-soc-darkest font-bold shadow-lg shadow-soc-accent/20"
-                  : "text-gray-400 hover:text-white"
-              }`}
-            >
-              <QrCode className="w-4 h-4" />
-              <span>QR Scanner</span>
-            </button>
-
-            <button
-              onClick={() => {
-                setActiveTab("about");
-                setCurrentResult(null);
-              }}
-              className={`flex items-center gap-2 px-4 py-2.5 rounded-lg transition-all ${
-                activeTab === "about"
-                  ? "bg-soc-accent text-soc-darkest font-bold shadow-lg shadow-soc-accent/20"
-                  : "text-gray-400 hover:text-white"
-              }`}
-            >
-              <Info className="w-4 h-4" />
-              <span>About & Guide</span>
-            </button>
+          <div className="inline-flex p-1.5 rounded-xl bg-soc-darker border border-soc-border text-xs font-mono gap-1">
+            {tabs.map((tab) => (
+              <button
+                key={tab.id}
+                onClick={() => {
+                  setActiveTab(tab.id);
+                  setCurrentResult(null);
+                }}
+                className={`flex items-center gap-1.5 px-3 py-2 rounded-lg transition-all whitespace-nowrap ${
+                  activeTab === tab.id
+                    ? "bg-soc-accent text-soc-darkest font-bold shadow-lg shadow-soc-accent/20"
+                    : "text-gray-400 hover:text-white hover:bg-soc-dark"
+                }`}
+              >
+                {tab.icon}
+                <span>{tab.label}</span>
+              </button>
+            ))}
           </div>
         </div>
 
@@ -194,6 +137,9 @@ export default function ThreatDashboard() {
           {activeTab === "hash" && <HashScanner onScanComplete={handleScanComplete} />}
           {activeTab === "file" && <FileScanner onScanComplete={handleScanComplete} />}
           {activeTab === "qr" && <QrScanner onScanComplete={handleScanComplete} />}
+          {activeTab === "email" && <EmailScanner onScanComplete={handleScanComplete} />}
+          {activeTab === "domain" && <DomainScanner onScanComplete={handleScanComplete} />}
+          {activeTab === "cve" && <CveScanner onScanComplete={handleScanComplete} />}
           {activeTab === "about" && <AboutSection />}
         </div>
 
@@ -202,12 +148,14 @@ export default function ThreatDashboard() {
           <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-300">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <Shield className="w-5 h-5 text-soc-accent" />
-                <h3 className="text-lg font-bold text-white">Investigation Results</h3>
+                <span className="w-2.5 h-2.5 rounded-full bg-soc-accent animate-pulse" />
+                <h3 className="text-base font-bold text-white font-mono uppercase tracking-wider">
+                  Investigation Results
+                </h3>
               </div>
 
               <button
-                onClick={handleResetScan}
+                onClick={handleNewScan}
                 className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-soc-dark hover:bg-soc-border/60 text-xs font-mono text-gray-300 border border-soc-border transition-colors"
               >
                 <RotateCcw className="w-3.5 h-3.5" />
@@ -215,11 +163,13 @@ export default function ThreatDashboard() {
               </button>
             </div>
 
-            {/* Verdict Card */}
+            {/* Verdict Banner */}
             <VerdictBanner result={currentResult} />
 
-            {/* Security Vendor Matrix */}
-            <VendorMatrix engines={currentResult.engines || []} />
+            {/* Security Vendor Matrix (if engines available) */}
+            {currentResult.engines && currentResult.engines.length > 0 && (
+              <VendorMatrix engines={currentResult.engines} />
+            )}
 
             {/* In-depth Intelligence Report */}
             <ReportDetails result={currentResult} />
@@ -232,7 +182,7 @@ export default function ThreatDashboard() {
         <div className="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-3">
           <div className="flex items-center gap-2 text-gray-400">
             <Shield className="w-4 h-4 text-soc-accent" />
-            <span>ThreatVigil Security Intelligence</span>
+            <span>ThreatVigil Security Intelligence Suite</span>
             <span>•</span>
             <Link href="/about" className="hover:text-soc-accent underline transition-colors">
               How to Use / About
